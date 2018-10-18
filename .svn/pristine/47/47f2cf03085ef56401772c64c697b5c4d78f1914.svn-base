@@ -1,0 +1,39 @@
+var common = function() {
+
+	//加载日期控件
+	function setWdDate(id) {
+		if(id.indexOf('#') == -1 && id.indexOf('.') == -1) {
+			id = "#" + id;
+		}
+		$(id + ' .Wdate').focus(function() {
+			
+			var eleId = $(this).attr("id");
+			
+			var dateFmt = ($(this).data("datefmt")) ? $(this).data("datefmt") : "yyyy-MM-dd";
+			var mindate = ($(this).data("mindate")) ? $(this).data("mindate") : "1900-01-01";
+			var maxdate = ($(this).data("maxdate")) ? $(this).data("maxdate") : "2099-12-31";
+			
+			if(eleId == "endTime" && $(id).find("#startTime").length > 0 && $(id).find("#startTime").val()){
+				mindate = $(id).find("#startTime").val();
+			}
+			if(eleId == "startTime" && $(id).find("#endTime").length > 0 && $(id).find("#endTime").val()){
+				maxdate = $(id).find("#endTime").val();
+			}
+			var defvalue = $(this).val();
+
+			jQuery(this).wdDate({
+				defvalue: defvalue,
+				dateFmt: dateFmt,
+				mindate: mindate,
+				maxdate: maxdate
+			});
+		})
+	};
+	
+	
+	
+	return {
+		setWdDate:setWdDate,
+	}
+}();
+

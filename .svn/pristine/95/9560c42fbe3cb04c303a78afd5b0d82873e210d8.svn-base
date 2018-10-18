@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>换届选举申请单详情</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <style>
+        table tr {
+            border-bottom: 1px solid lightgrey;
+        }
+
+        .input_text {
+            /*background-color: transparent;*/
+            border-bottom: 1px solid #dbdbdb;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            text-align: center;
+            width: 10%;
+        }
+    </style>
+    <script>
+        $(function () {
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format:'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+            $("table tbody tr:not('.head'):not('.t-title'):even").css("background","whitesmoke")
+            $("table tbody tr:not('.head'):not('.t-title'):even input").css("background","whitesmoke");
+            $("table tbody tr input").css("text-align","center");
+
+            $("#biao a").click(function (){
+                var id=$(this).attr("id");
+                $(this).css("border","1px solid red");
+                $(this).nextAll().css("border","1px solid #ccc");
+                $(this).prevAll().css("border","1px solid #ccc");
+                $("."+id).css("display","block");
+                $("#form:not(."+id+")").css("display","none");
+                IFrameResize();
+            })
+        })
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+    </script>
+</head>
+<body style="width: 1145px; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#"><b>换届选举申请单详情</b></a>
+                        <div style="display: inline; position: absolute; left: 80%;">
+                            <button type="button" class="btn btn-danger icon-reply" style="width: 80px; margin-top: 8px;" onclick="" id="return"> 返回</button>
+                            <button type="button" class="btn btn-danger icon-ok" style="width: 80px; margin-top: 8px;" onclick="" id="niban"> 拟办</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="navbar navbar-default" style="margin-top: -15px; background: white; border: none; padding: 15px; border-radius: unset;">
+                <div class="container-fluid">
+                    <div>
+                        <h4 style="font-weight: bold;  text-align: center;">关于<input type="text" class="input_text" value="（单位名称）" style="width: 30%;">单位工会届中替补主席（经审主任）的请示</h4>
+                        <p style="text-align: center;">工字（年份）<input type="text" class="input_text" style="width: 10%;text-align: center;">号</p>
+                        <p>上级工会委员会（名称）：<input type="text" class="input_text" style="width: 40%;"></p>
+                        <p style="text-indent: 2em;"><input type="text" class="input_text" style="width: 15%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届委员会现有委员<input type="text" class="input_text" style="width: 5%;">名，经审查文员会现有委员<input type="text" class="input_text" style="width: 5%;">名，自<input type="text" class="input_text" style="width: 15%;">单位工会<input type="text" class="input_text" style="width: 5%;">届<input type="text" class="input_text" style="text-align: center;width: 5%;">次全委会以来，<input type="text" class="input_text" style="width: 5%;">届委员会主席（经审主任）<input type="text" class="input_text" style="width: 5%;">、<input type="text" class="input_text" style="width: 5%;">同志因工作单位、现任职务变动。</p>
+                        <p style="text-indent: 2em;"><input type="text" class="input_text" style="width: 15%;">单位工会<input type="text" class="input_text" style="width: 5%;">届委员会提议<input type="text" class="input_text" style="width: 5%;">、<input type="text" class="input_text" style="width: 5%;">同志不再担任<input type="text" class="input_text" style="width: 5%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届委员会主席（经审主任）的职务。</p>
+                        <p style="text-indent: 2em;">因工作需要，<input type="text" class="input_text" style="width: 15%;">单位工会<input type="text" class="input_text" style="width: 5%;">届委员会提议<input type="text" class="input_text" style="width: 5%;">、<input type="text" class="input_text" style="width: 5%;">替补位主席（经审主任）。</p>
+                        <p style="text-indent: 2em">工作委员会主席（经审主任）候选人的产生，由<input type="text" class="input_text" style="width: 5%;">届委员会提出建议名单，报经同级党组织和上级工会审查同意。</p>
+                        <p style="text-indent: 2em">根据《工会法》和《中华工会章程》的有关规定，经本单位党组织统一，拟于<input type="text" class="input_text" style="width: 5%;">年<input type="text" class="input_text" style="width: 5%;">月召开<input type="text" class="input_text" style="width: 15%;">单位工会委员会（经审委员会）全体会议不选主席（经审主任）同时免去被替补人选的主席（经审主任）的职务。</p>
+                        <p style="float: right; text-align: center;">
+                            <br>
+                            <br>
+                            <br>
+                            <input type="text" class="input_text" style="width: 50%;" />单位工会名称（盖章）<br>
+                            <input type="text" class="input_text">年<input type="text" class="input_text">月<input type="text" class="input_text">日
+                        </p>
+                        <p style="border: unset; width: 95%; display: inline-block">附：工会主席（经审主任）候选人情况表</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="part2" style="margin:0 auto ">
+            <div id="form" class="navbar navbar-default choubei" style="margin-top: -20px; display: block; background: white; border: none; border-radius: unset;">
+                <div style="width: 1125px; border-radius:23px; padding: 15px;  margin: 5px 10px 25px 10px;">
+                    <h4 style="text-align: center;"><b data-field="title" id="title">工会主席（经审主任）候选人情况表</b></h4>
+                    <div style="display: block">
+                        <p data-field="content">
+                            单位名称：<input id="name" class="input_text" style="margin-right: 15px;width: 30%;">
+                            填报时间：<input type="text" class='input_text' style="width: 5%;">年<input type="text" class='input_text' style="width: 5%;">月<input type="text" class='input_text' style="width: 5%;">日
+                        </p>
+                    </div>
+                    <div class="fixed-table-container" style="padding-bottom: 0px;">
+                        <div class="fixed-table-body">
+                            <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                            <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;" class="table-hover">
+                                <thead style="background: lightgrey;">
+                                    <tr>
+                                        <th style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner">姓名</div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">性别</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">出生年月</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="education" tabindex="0">
+                                            <div class="th-inner">文化程度</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">政治面貌</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">工会职务</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="job" tabindex="0">
+                                            <div class="th-inner">现任行政职务</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="phone" tabindex="0">
+                                            <div class="th-inner">联系电话及E-mail</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody style="">
+                                    <tr class="no-records-found">
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="no-records-found">
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="no-records-found">
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="no-records-found">
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                    </tr>
+                                    <tr class="no-records-found">
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner sortable "><input name="name" type="text" style="border: none; width:100%;"></div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="fixed-table-footer" style="display: none;float: right;">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li>
+                                    <a href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li>
+                                    <a href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal" style="width: 80px; border-radius: 5px; line-height: 20px; margin-left: 1000px; margin-top: 5px;" onclick="" id="save1">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+                <div class="modal-body" style="height: 500px;">
+                    <h3 align="center"><input type="text" class="input_text" value="（上级工会名称）" style="width: 60%;"></h3>
+                    <p align="center"><input type="text" class="input_text" value="（上级工会文号）" style="width: 60%;"></p>
+                    <h4 align="center">关于同意<input type="text" class="input_text">(单位)工会届中替补主席（经审主任）的批复</h4>
+                    <br />
+                    <p><input type="text" class="input_text" style="width: 15%;">（单位）工会委员会：</p>
+                    <p style="text-indent:2em;">你会《关于<input type="text" class="input_text" style="width: 15%;">单位工会替补主席（经审主任）的请示》收悉。经研究，现批复如下：</p>
+                    <p style="text-indent:2em;">一、同意<input type="text" class="input_text" style="width: 15%;">（单位）工会<input type="text" class="input_text" style="width: 10%;">年<input type="text" class="input_text" style="width: 5%;">月召开第<input type="text" class="input_text" style="width: 5%;">届第<input type="text" class="input_text" style="width: 5%;">次工会委员会（经审委员会）全体会议补选主席（经审主任）；同时免去被替补人选的主席（经审主任）职务。</p>
+                    <p style="text-indent:2em;">二、请按《中国工会章程》规定，抓紧做好相关工作。</p>
+                    <br />
+                    <br />
+                    <p align="right">上级工会名称（盖章）</p>
+                    <p align="right"><input type="text" class="input_text" style="width:10%;">年<input type="text" class="input_text" style="width:10%;">月<input type="text" class="input_text" style="width:10%;">日</p>
+                </div>
+                <div class="modal-footer" style="border:
+unset">
+                    <button type="button" class="btn btn-danger" style="width: 70px;">
+                        批复
+                    </button>
+                    <button type="button" class="btn btn-default" style="background: dimgrey; width: 70px; color: white;" data-dismiss="modal">
+                        取消
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</body>
+</html>

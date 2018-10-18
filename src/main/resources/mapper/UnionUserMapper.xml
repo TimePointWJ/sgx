@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionUserMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionUser">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="CHAR" property="userName" />
+    <result column="login_id" jdbcType="INTEGER" property="loginId" />
+   <result column="higher_union_id" jdbcType="INTEGER" property="higherUnionId" />
+    <result column="higher_union" jdbcType="VARCHAR" property="higherUnion" />
+    <result column="union_id" jdbcType="INTEGER" property="unionId" />
+    <result column="union_name" jdbcType="VARCHAR" property="union" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="access" jdbcType="CHAR" property="access" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
+    <result column="union_position" jdbcType="VARCHAR" property="job" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, login_id, higher_union_id, higher_union, union_id, union_name,
+     remarks, access, password, creat_time, delflag, union_position
+  </sql>
+  <select id="getUser" resultMap="BaseResultMap">
+      select * from union_user where login_id = #{loginId} and delflag != 'D'
+  </select>
+  <update id="updateUser" parameterType="com.jtzh.entity.UnionUser">
+    update union_user
+    set user_name = #{userName,jdbcType=CHAR},
+      login_id = #{loginId,jdbcType=VARCHAR},  
+      email = #{email,jdbcType=VARCHAR},
+      identity = #{identity,jdbcType=VARCHAR},
+      union_name = #{union,jdbcType=VARCHAR},
+      union_position = #{job,jdbcType=VARCHAR},
+      higher_union = #{higherUnion,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByLoginId" parameterType="java.lang.String" resultMap="BaseResultMap">
+      select * from union_user where login_id = #{loginId} and delflag != 'D'
+  </select>
+    <select id="selectUserList" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from union_user 
+    where delflag != 'D'
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and creat_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and creat_time &lt; #{page.param.endTime}
+    </if>
+   <if test="page.param.userName != null and page.param.userName != ''" >
+    and (user_name like concat('%', #{page.param.userName}, '%') 
+    or higher_union like concat('%', #{page.param.userName}, '%')
+    or union_name like concat('%', #{page.param.userName}, '%'))
+    </if>   
+    order by creat_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+  <select id="selectTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+  	select count(1)
+    from union_user 
+    where delflag != 'D'
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and creat_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and creat_time &lt; #{page.param.endTime}
+    </if>
+    <if test="page.param.userName != null and page.param.userName != ''" >
+    and (user_name like concat('%', #{page.param.userName}, '%') 
+    or higher_union like concat('%', #{page.param.userName}, '%')
+    or union_name like concat('%', #{page.param.userName}, '%'))
+    </if>   
+  </select>
+   <update id="deleteUser">
+    update union_user
+    set 
+      delflag = 'D'
+    where id = #{id}
+  </update>
+    <insert id="insert" parameterType="com.jtzh.entity.UnionUser">
+    insert into union_user (id, user_name, login_id, 
+      union_id, higher_union_id, higher_union, union_name, remarks, access,
+      password, creat_time, delflag, identity, email, union_position
+      )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=CHAR}, #{loginId,jdbcType=VARCHAR}, 
+      #{unionId,jdbcType=INTEGER}, #{higherUnionId,jdbcType=INTEGER}, #{higherUnion,jdbcType=VARCHAR},
+      #{union,jdbcType=VARCHAR}, #{remarks,jdbcType=VARCHAR}, #{access,jdbcType=CHAR},
+      #{password,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR},
+      #{identity,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{job,jdbcType=VARCHAR}
+      )
+  </insert>
+   <select id="getUserList" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from union_user 
+    where delflag != 'D'
+    order by creat_time asc
+  </select>
+</mapper>

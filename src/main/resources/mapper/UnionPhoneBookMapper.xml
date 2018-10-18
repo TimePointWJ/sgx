@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionPhoneBookMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionPhoneBook">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="occupation" jdbcType="VARCHAR" property="occupation" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber" />
+    <result column="mail" jdbcType="VARCHAR" property="mail" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, occupation, position, phone_number, mail, create_id, create_time, delflag
+  </sql>
+  <select id="selectBook" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_phone_book
+    where delflag != 'D' 
+    <if test="page.param.name != null and page.param.name != ''">
+    and name like concat('%', #{page.param.name}, '%')
+    </if>
+    <if test="page.param.occupation != null and page.param.occupation != ''">
+    and occupation like concat('%', #{page.param.occupation}, '%')
+    </if>
+        <if test="page.param.position != null and page.param.position != ''" >
+    and position = #{page.param.position}
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+    order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+    <select id="selectBookTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+    select count(1)
+    from union_phone_book
+    where delflag <![CDATA[<>]]> 'D' 
+    <if test="page.param.name != null and page.param.name != ''">
+    and name like concat('%', #{page.param.name}, '%')
+    </if>
+    <if test="page.param.occupation != null and page.param.occupation != ''">
+    and occupation like concat('%', #{page.param.occupation}, '%')
+    </if>
+     <if test="page.param.position != null and page.param.position != ''" >
+    and position = #{page.param.position}
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+  </select>
+  
+  <update id="delectBook">
+    update union_phone_book
+    set 
+      delflag = 'D'
+    where id = #{id}
+  </update>
+  
+  <update id="updateBook" parameterType="com.jtzh.entity.UnionPhoneBook">
+    update union_phone_book
+    set name = #{name,jdbcType=VARCHAR},
+      occupation = #{occupation,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      mail = #{mail,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+
+  <insert id="insertBook" parameterType="com.jtzh.entity.UnionPhoneBook">
+    insert into union_phone_book (id, name, occupation, 
+      position, phone_number, mail, 
+      create_id, create_time, delflag
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{occupation,jdbcType=VARCHAR}, 
+      #{position,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=VARCHAR}, #{mail,jdbcType=VARCHAR}, 
+      #{createId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionPhoneBook">
+    insert into union_phone_book
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="occupation != null">
+        occupation,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="phoneNumber != null">
+        phone_number,
+      </if>
+      <if test="mail != null">
+        mail,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="occupation != null">
+        #{occupation,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null">
+        #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionPhoneBook">
+    update union_phone_book
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="occupation != null">
+        occupation = #{occupation,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneNumber != null">
+        phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null">
+        mail = #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionPhoneBook">
+    update union_phone_book
+    set name = #{name,jdbcType=VARCHAR},
+      occupation = #{occupation,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      phone_number = #{phoneNumber,jdbcType=VARCHAR},
+      mail = #{mail,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

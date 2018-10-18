@@ -1,0 +1,122 @@
+package com.jtzh.service;
+
+
+
+import javax.annotation.Resource;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.common.page.Page;
+import com.jtzh.entity.UnionNews;
+import com.jtzh.entity.UnionSource;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.mapper.UnionNewsMapper;
+import com.jtzh.mapper.UnionSourceMapper;
+import com.jtzh.pojo.NewsParam;
+import com.jtzh.pojo.ViewNews;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+
+@Service("newsService")
+public class NewsServiceImpl implements NewsService {
+
+	@Resource
+	private UnionNewsMapper unionNewsMapper;
+	
+	@Resource
+	private UnionSourceMapper unionSourceMapper;
+
+    /**
+     * 获取新闻列表
+     * @param newsParam
+     * @return
+     */
+	@Override
+	public Object getNews(NewsParam newsParam) {
+		Page page = new Page();
+        page.setCurrPage(newsParam.getPage());
+        page.setPageSize(newsParam.getPageSize());
+        page.setParam(newsParam);
+        int total = unionNewsMapper.selectNewsCount(page);
+        if(total >0) {
+        	 List<UnionNews> list = unionNewsMapper.selectNews(page);
+             page.setTotal(total);
+             page.setData(list);
+        }
+		return page;
+	}
+
+
+    /**
+     * 获取新闻详情
+     * @param id
+     * @return
+     */
+	@Override
+	public Object getNewsInfo(String id) {
+		ViewNews news = unionNewsMapper.selectNewsInfo(id);
+		List<UnionSource> list = unionSourceMapper.selectSource("01", id);
+		news.setSourceList(list);
+
+		return news;
+	}
+
+    /**
+     * 删除新闻
+     * @param id
+     * @return
+     */
+	@Override
+	public Object removeNews(String id) {
+		unionNewsMapper.removeNew(id);
+		unionSourceMapper.removeSource("01",id);//01-新闻
+		ResultObject res = new ResultObject();
+		res.setResult(true);
+		return res;
+	}
+
+	/**
+	 * 新增新闻
+	 */
+	@Override
+	public Object insertNews(ViewNews viewNews, UnionUser user) {
+		viewNews.setCreateId(user.getLoginId());
+		viewNews.setCreateName(user.getUserName());
+		viewNews.setCreateTime(new Date());
+		viewNews.setDelflag("A");
+		
+		List<UnionSource> list = viewNews.getSourceList();
+		
+		unionNewsMapper.insertNews(viewNews);//新增新闻
+		if(list!=null && list.size()>0) {
+			for(UnionSource source : list) {
+				source.setCreatTime(new Date());
+				source.setDelflag("A");
+				source.setAttachmentSource("01");
+				source.setSourceId(viewNews.getId());
+				unionSourceMapper.insertSource(source);
+			}
+		}
+		return new ResultObject();
+		 
+	}
+
+
+	@Override
+	public Object updateNews(ViewNews viewNews) {
+		unionNewsMapper.updateNews(viewNews);
+		unionSourceMapper.removeSource("01",viewNews.getId());
+		List<UnionSource> list = viewNews.getSourceList();
+		if(list!=null && list.size()>0) {
+			for(UnionSource source : list) {
+				source.setCreatTime(new Date());
+				source.setDelflag("A");
+				source.setSourceId(viewNews.getId());
+				unionSourceMapper.insertSource(source);
+			}
+		}
+		return null;
+	}
+}

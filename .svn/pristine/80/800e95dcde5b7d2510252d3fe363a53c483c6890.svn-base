@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionBallotInfoMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionBallotInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ballot_id" jdbcType="INTEGER" property="ballotId" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ballot_num" jdbcType="INTEGER" property="ballotNum" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, ballot_id, type, name, ballot_num, delflag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_ballot_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_ballot_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jtzh.entity.UnionBallotInfo">
+    insert into union_ballot_info (id, ballot_id, type, 
+      name, ballot_num, delflag
+      )
+    values (#{id,jdbcType=INTEGER}, #{ballotId,jdbcType=INTEGER}, #{type,jdbcType=CHAR}, 
+      #{name,jdbcType=VARCHAR}, #{ballotNum,jdbcType=INTEGER}, #{delflag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionBallotInfo">
+    insert into union_ballot_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="ballotId != null">
+        ballot_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="ballotNum != null">
+        ballot_num,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="ballotId != null">
+        #{ballotId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ballotNum != null">
+        #{ballotNum,jdbcType=INTEGER},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionBallotInfo">
+    update union_ballot_info
+    <set>
+      <if test="ballotId != null">
+        ballot_id = #{ballotId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ballotNum != null">
+        ballot_num = #{ballotNum,jdbcType=INTEGER},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionBallotInfo">
+    update union_ballot_info
+    set ballot_id = #{ballotId,jdbcType=INTEGER},
+      type = #{type,jdbcType=CHAR},
+      name = #{name,jdbcType=VARCHAR},
+      ballot_num = #{ballotNum,jdbcType=INTEGER},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主席（非委员）</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <style>
+        #table1{
+            border: none;
+        }
+        #table2{
+            border: none;
+        }
+        #title a {
+            text-align: center;
+            width: 170px;
+            border-radius: unset;
+            line-height: 37px;
+        }
+        #part2 div, #part2 table{
+            border: none;
+            border-radius: unset;
+        }
+        #part4 div, #part4 table{
+            border: none;
+            border-radius: unset;
+        }
+        #part2 a{
+            width: 50px;
+        }
+        #part4 a{
+            width: 50px;
+        }
+        /*复选框样式调整*/
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+        .no-records-found:hover{
+            color:red;
+        }
+
+        #action1 a{
+            text-decoration: none;
+            color: black;
+        }
+        #action2 a{
+            text-decoration: none;
+            color: black;
+        }
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left:5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+        .squaredFour input[type=checkbox]:checked + label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background","whitesmoke");
+            $("#table2 tr:even:gt(0)").css("background","whitesmoke");
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+
+//            $("table tbody tr:not('.head'):not('.t-title'):even").css("background","whitesmoke")
+            $("table tbody tr:not('.head'):not('.t-title'):even input").css("background","whitesmoke");
+            $("table tbody tr input").css("text-align","center");
+
+            $("#biao a").click(function (){
+                var id=$(this).attr("id");
+                $(this).css("border","1px solid red");
+                $(this).nextAll().css("border","1px solid #ccc");
+                $(this).prevAll().css("border","1px solid #ccc");
+                $("."+id).css("display","block");
+                $("#form:not(."+id+")").css("display","none");
+                IFrameResize();
+            })
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck(that) {
+            if (isCheckAll) {
+
+                if(that.name === 'checkA'){
+                    Array.prototype.slice.call(document.getElementById('table1').getElementsByTagName('input')).forEach(function(input) {
+                        input.checked = false;
+                    });
+
+                }else if(that.name === 'checkB'){
+                    Array.prototype.slice.call(document.getElementById('table2').getElementsByTagName('input')).forEach(function(input) {
+                        input.checked = false;
+                    });
+                }
+                isCheckAll = false;
+            } else {
+                if(that.name === 'checkA'){
+                    Array.prototype.slice.call(document.getElementById('table1').getElementsByTagName('input')).forEach(function(input) {
+                        input.checked = true;
+                    });
+
+                }else if(that.name === 'checkB'){
+                    Array.prototype.slice.call(document.getElementById('table2').getElementsByTagName('input')).forEach(function(input) {
+                        input.checked = true;
+                    });
+                }
+                isCheckAll = true;
+            }
+        }
+    </script>
+</head>
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+<div id="container ">
+    <div id="title" style="margin:0 auto">
+        <nav class="navbar navbar-default" style="margin-top: 0px; border-radius: unset; border: none; background: #d9534f;">
+            <div class="navbar-header">
+                <!--<a class="navbar-brand" href="#"><b>组织成立申请单详情</b></a>-->
+                <div id="biao" style="display: inline; position: absolute; left: 2%;">
+                    <a class="btn btn-default" id="houxuanren" style="width: 230px;border:1px solid red;">主席、经审主任（非委员）请示</a>
+                    <a class="btn btn-default" id="feeCheck" style="margin-left: -4px;"> 选举结果请示</a>
+                </div>
+            </div>
+        </nav>
+        <div id="form" class="navbar navbar-default houxuanren" style="margin-top: 0px; background: white; border: none; border-radius: unset;">
+            <div id="part1" style="margin:0 auto">
+                <div id="content1" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                    <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                        <div id="condition1">
+                            <div style="margin-bottom: 15px; display: inline;">
+                                <span>关键词：<input id="keyword" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                            </div>
+                            <div style=" margin-left: 30px; display: inline;">
+                                <span>日期：<input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                                <span>至</span>
+                                <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </div>
+
+                            <div style="display:inline;margin-left: 50px;">
+                                <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch111">搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="part2" style="margin:0 auto" >
+                <div id="form1" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                    <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                        <div id="action1" style="margin-top: -25px;">
+                            <a href="ReplaceChair.html"><div class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="fixed-table-container" style="padding-bottom: 0px;">
+                            <div class="fixed-table-body">
+                                <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                                <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;"> <!--class="table-hover"-->
+                                    <thead style="background: whitesmoke;">
+                                    <tr>
+                                        <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" onclick="swapCheck(this)" value="None" id="1" name="checkA" >
+                                                        <label for="1"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner">标题</div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">单位名称</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">申请时间</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="education" tabindex="0">
+                                            <div class="th-inner">当前状态</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+
+                                        <th style="text-align: center;width: 200px;" data-field="job" tabindex="0">
+                                            <div class="th-inner">操作</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="" id="electionContainer">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="m-style" style="display: block;float: right">
+                                <nav aria-label="Page navigation">
+                                    <div id="Pagination" class="pagination">
+
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/ractive" id="electionTemplate">
+                                        {{#if data && data.length>0}}
+                                        {{#each data : i}}
+                                        <tr class="no-records-found">
+                                            <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                                <div class="th-inner ">
+                                                    <!--<input name="btSelectAll" type="checkbox">-->
+                                                    <section title=".squaredFour">
+                                                        <!-- .squaredFour -->
+                                                        <div class="squaredFour">
+                                                            <input type="checkbox" value="None" id="{{i+2}}" name="squaredFour"  />
+                                                            <label for="{{i+2}}"></label>
+                                                        </div>
+                                                        <!-- end .squaredFour -->
+                                                    </section>
+                                                </div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">{{data[i].title}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].comName}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].applyYear}}-{{data[i].applyMouth}}-{{data[i].applyDay}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].processingState}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">
+                                                    <button type="button" class="btn btn-danger">查看</button>
+                                                    <button type="button" class="btn btn-danger">修改</button>
+                                                    <button type="button" class="btn btn-danger">删除</button>
+                                                </div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                        {{/if}}
+        </script>
+        <script>
+            var address_app = function(){
+
+                var pageSize = 5;
+                var page = 1;
+                var initFlag = true;
+                var ractive;
+                function renderView() {
+                    ractive = new Ractive({
+                        el:"#electionContainer",
+                        template:"#electionTemplate",
+                        onrender:function(){},
+                        oncomplete:function(){
+
+                            getDataList(1,null)
+
+                        }
+                    })
+                }
+                $("#btnSearch111").click(function () {
+                        initFlag = true;
+                        getDataList(1, null)
+                    })
+                var getDataList = function (currPage,jg) {
+                    var param = {pageSize : pageSize,page : currPage}
+                    param.keyword = $("#keyword").val();
+                        param.start = $("#startTime").val();
+                        param.end = $("#endTime").val();
+                    $.ajax({
+                        url : Constants.path+"union/getUionList",
+                        type : "post",
+                        dataType : 'json',
+                        data : JSON.stringify(param),
+                        contentType : "application/json",
+                        success : function(response) {
+                            console.log(response)
+                            if (response) {
+                              
+                                        $("#Pagination").pagination(
+                                                {
+                                                    pageCount : Math.ceil(response.total/pageSize),
+                                                    totalData : response.total,
+                                                    showData : pageSize,
+                                                    callback : function (api) {
+                                                        getDataList(api.getCurrent(),null)
+                                                    }//回调函数
+                                                });
+                                        initFlag = false;
+                                  
+                                        if (response.data != null && response.data != "") {
+                                        ractive.set("data", response.data);
+                                    } else {
+                                        ractive.set("data", "");
+                                    }
+                             
+                            } else {
+                                //暂无数据
+                            }
+                        }
+                    });
+                }
+                return {
+                    init:function(){
+                        renderView();
+                    }
+                }
+            }();
+            $(document).ready(address_app.init)
+        </script>
+        <div id="form" class="navbar navbar-default feeCheck" style="margin-top: 0px; display: none; background: white; border: none; border-radius: unset;">
+            <div id="part3" style="margin:0 auto">
+                <div id="content2" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                    <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                        <div id="condition2">
+                            <div style="margin-bottom: 15px; display: inline;">
+                                <span>关键词：<input id="keyword" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                            </div>
+                            <div style=" margin-left: 30px; display: inline;">
+                                <span>日期：<input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                                <span>至</span>
+                                <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </div>
+
+                            <div style="display:inline;margin-left: 50px;">
+                                <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch222">搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="part4" style="margin:0 auto" >
+                <div id="form2" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                    <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                        <div id="action2" style="margin-top: -25px;">
+                            <a href="ReplaceChairResult.html"><div class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="fixed-table-container" style="padding-bottom: 0px;">
+                            <div class="fixed-table-body">
+                                <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                                <table id="table2" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;"> <!--class="table-hover"-->
+                                    <thead style="background: whitesmoke;">
+                                    <tr>
+                                        <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" onclick="swapCheck(this)" value="None" id="8" name="checkB" >
+                                                        <label for="8"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner">标题</div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">单位名称</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">申请时间</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="education" tabindex="0">
+                                            <div class="th-inner">当前状态</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+
+                                        <th style="text-align: center;width: 200px;" data-field="job" tabindex="0">
+                                            <div class="th-inner">操作</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="" id="resultContainer">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="m-style" style="display: block;float: right">
+                                <nav aria-label="Page navigation">
+                                    <div id="Pagination1" class="pagination">
+
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/ractive" id="resultTemplate">
+                                    {{#if data && data.length>0}}
+                                    {{#each data : i}}
+                                     <tr class="no-records-found">
+                                        <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" value="None" id="{{i+9}}" name="squaredFour"  />
+                                                        <label for="{{i+9}}"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </td>
+                                        <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">{{data[i].title}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].comName}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].applyYear}}-{{data[i].applyMouth}}-{{data[i].applyDay}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].processingState}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">
+                                                    <button type="button" class="btn btn-danger">查看</button>
+                                                    <button type="button" class="btn btn-danger">修改</button>
+                                                    <button type="button" class="btn btn-danger">删除</button>
+                                                </div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                    </tr>
+                                    {{/each}}
+                                    {{/if}}
+        </script>
+        <script>
+            var address_app = function(){
+
+                var pageSize = 5;
+                var page = 1;
+                var initFlag = true;
+                var ractive;
+                function renderView() {
+                    ractive = new Ractive({
+                        el:"#resultContainer",
+                        template:"#resultTemplate",
+                        onrender:function(){},
+                        oncomplete:function(){
+
+                            getDataList(1,null)
+
+                        }
+                    })
+                }
+                $("#btnSearch222").click(function () {
+                        initFlag = true;
+                        getDataList(1, null)
+                    })
+                var getDataList = function (currPage,jg) {
+                    var param = {pageSize : pageSize,page : currPage}
+                    param.keyword = $("#keyword").val();
+                        param.start = $("#startTime").val();
+                        param.end = $("#endTime").val();
+                    $.ajax({
+                        url : Constants.path+"union/getUionList",
+                        type : "post",
+                        dataType : 'json',
+                        data : JSON.stringify(param),
+                        contentType : "application/json",
+                        success : function(response) {
+                            console.log(response)
+                            if (response) {
+                               
+                                        $("#Pagination1").pagination(
+                                                {
+                                                    pageCount : Math.ceil(response.total/pageSize),
+                                                    totalData : response.total,
+                                                    showData : pageSize,
+                                                    callback : function (api) {
+                                                        getDataList(api.getCurrent(),null)
+                                                    }//回调函数
+                                                });
+                                        initFlag = false;
+                                   
+                                    if (response.data != null && response.data != "") {
+                                        ractive.set("data", response.data);
+                                    } else {
+                                        ractive.set("data", "");
+                                    }
+                               
+                            } else {
+                                //暂无数据
+                            }
+                        }
+                    });
+                }
+                return {
+                    init:function(){
+                        renderView();
+                    }
+                }
+            }();
+            $(document).ready(address_app.init)
+        </script>
+    </div>
+</div>
+</body>
+</html>

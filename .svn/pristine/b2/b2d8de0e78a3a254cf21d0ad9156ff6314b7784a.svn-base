@@ -1,0 +1,49 @@
+/**
+ * 常量
+ */
+var Constants = window.Constants || {};
+var appAddress = 'http://127.0.0.1/zxkf-admin/';//配置项目请求地址
+
+//项目地址
+Constants.projectPath = "http://127.0.0.1/zxkf-admin/";
+
+//登录地址
+Constants.userLoginUrl = "http://127.0.0.1/ptyhzx-dlzc/";
+
+//接口地址
+Constants.path = 'http://192.168.31.34:8888/';
+
+//未登录
+Constants.noLoginCode = "4002";
+
+//前端临时常量 应用租户
+Constants.yyzh = "01";
+
+//前端临时常量 业务租户
+Constants.ywzh = "000000";
+
+//前端临时常量 业务域 交易中心默认000000
+Constants.busdomain = "000000";
+
+//前端临时常量 填报人所属机构编号
+Constants.tbrssjgbh = "01";
+
+//前端临时常量 填报人所属机构名称
+Constants.tbrssjgmc = "交易中心"
+
+
+Constants.ssfdm = '01';//所属方代码
+
+Constants.kffzzt = {//客服分组状态
+		yqy: 0,//已启用
+		yty: 1,//已停用
+		wqy: 2//未启用
+}
+Constants.yesOrno = {
+		y: 0,//是
+		n: 1//否
+}
+Constants.kfzt = {//客服分组状态
+		qy: 0,//已启用
+		ty: 1,//已停用
+}

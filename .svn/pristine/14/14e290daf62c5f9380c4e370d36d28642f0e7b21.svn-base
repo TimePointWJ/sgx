@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionNewsMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionNews">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="news_source" jdbcType="CHAR" property="newsSource" />
+    <result column="news_content" jdbcType="VARCHAR" property="newsContent" />
+     <result column="notice_synopsis" jdbcType="VARCHAR" property="noticeSynopsis" />
+    <result column="news_cover" jdbcType="VARCHAR" property="newsCover" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_name" jdbcType="CHAR" property="createName" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <resultMap id="BaseResultMap_" type="com.jtzh.pojo.ViewNews">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="news_title" jdbcType="VARCHAR" property="newsTitle" />
+    <result column="news_source" jdbcType="CHAR" property="newsSource" />
+    <result column="news_content" jdbcType="VARCHAR" property="newsContent" />
+    <result column="notice_synopsis" jdbcType="VARCHAR" property="noticeSynopsis" />
+     <result column="news_cover" jdbcType="VARCHAR" property="newsCover" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_name" jdbcType="CHAR" property="createName" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, news_title, news_source,news_cover,notice_synopsis,create_id,news_content, create_time, create_name, delflag
+  </sql>
+  <select id="selectNewsCount" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+    select count(1)
+    from union_news
+    where delflag <![CDATA[<>]]> 'D' 
+    <if test="page.param.source != null and page.param.source != ''">
+    and news_source = #{page.param.source}
+     </if>
+    <if test="page.param.keyWord != null and page.param.keyWord != ''">
+    and news_title like concat('%', #{page.param.keyWord}, '%')
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''" >
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+     <if test="page.param.titleName != null and page.param.titleName != ''">
+    and news_title like concat('%', #{page.param.titleName}, '%')
+     </if>
+  </select>
+  
+  <select id="selectNews" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_news
+    where delflag <![CDATA[<>]]> 'D' 
+	<if test="page.param.source != null and page.param.source != ''">
+    and news_source = #{page.param.source}
+     </if>
+    <if test="page.param.keyWord != null and page.param.keyWord != ''">
+    and news_title like concat('%', #{page.param.keyWord}, '%')
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''" >
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+     <if test="page.param.titleName != null and page.param.titleName != ''">
+    and news_title like concat('%', #{page.param.titleName}, '%')
+     </if>
+    order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+  
+  <select id="selectNewsInfo"  resultMap="BaseResultMap_">
+  
+  select * from union_news where id = #{id} and delflag != 'D'
+  </select>
+
+  <update id="removeNew">
+    update union_news
+    set
+      delflag = 'D'
+    where id = #{id}
+  </update>
+  
+  
+  <insert id="insertNews" parameterType="com.jtzh.pojo.ViewNews">
+  <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      </selectKey>
+    insert into union_news
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="newsTitle != null">
+        news_title,
+      </if>
+      <if test="newsSource != null">
+        news_source,
+      </if>
+      <if test="noticeSynopsis != null">
+        notice_synopsis,
+      </if>
+      <if test="newsContent != null">
+        news_content,
+      </if>
+      <if test="newsCover != null">
+        news_cover,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="newsTitle != null">
+        #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsSource != null">
+        #{newsSource,jdbcType=CHAR},
+      </if>
+      <if test="noticeSynopsis != null">
+        #{noticeSynopsis,jdbcType=CHAR},
+      </if>
+      <if test="newsContent != null">
+        #{newsContent,jdbcType=VARCHAR},
+      </if>
+       <if test="newsCover != null">
+       #{newsCover,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=CHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateNews" parameterType="com.jtzh.pojo.ViewNews">
+    update union_news
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_source = #{newsSource,jdbcType=CHAR},
+      news_content = #{newsContent,jdbcType=VARCHAR},
+      notice_synopsis = #{noticeSynopsis,jdbcType=CHAR},
+      news_cover = #{newsCovert,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

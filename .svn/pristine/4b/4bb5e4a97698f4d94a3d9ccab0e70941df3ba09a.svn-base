@@ -1,0 +1,11 @@
+package com.jtzh.service;
+
+import com.jtzh.entity.UnionUser;
+
+import javax.servlet.http.HttpServletRequest;
+
+public interface UnionUserService {
+
+	Object getUser(HttpServletRequest request, UnionUser user);
+	Object updateUser(UnionUser exUser, UnionUser user);
+}

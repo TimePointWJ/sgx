@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新增法律法规</title>
+    <!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/fileinput.min.js"></script>
+    <script charset="utf-8" src="../kindeditor-4.1.11-zh-CN/kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="../kindeditor-4.1.11-zh-CN/kindeditor/lang/zh-CN.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+        <script src="../js/storejson2.min.js"></script>
+    <style>
+        table tr{
+            border-bottom: 1px solid lightgrey;
+        }
+        .input_text{
+            /*background-color: transparent;*/
+            border-bottom: 1px solid #dbdbdb;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            text-align: center;
+            width: 10%;
+        }
+    </style>
+    <script>
+        $(function () {
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format:'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+            $("table tbody tr:not('.head'):not('.t-title'):even").css("background","whitesmoke");
+            $("table tbody tr:not('.head'):not('.t-title'):even input").css("background","whitesmoke");
+            $("table tbody tr input").css("text-align","center");
+
+            $("#biao a").click(function (){
+                var id=$(this).attr("id");
+                $(this).css("border","1px solid red");
+                $(this).nextAll().css("border","1px solid #ccc");
+                $(this).prevAll().css("border","1px solid #ccc");
+                $("."+id).css("display","block");
+                $("#form:not(."+id+")").css("display","none");
+                IFrameResize();
+            })
+        })
+
+        //文本编辑器
+        KindEditor.ready(function(K) {
+            window.editor = K.create('#editor_id');
+        });
+        var options = {
+            cssPath : '/css/index.css',
+            filterMode : true
+        };
+        var editor = K.create('textarea[name="content"]', options);
+        // 取得HTML内容
+        html = editor.html();
+
+        // 同步数据后可以直接取得textarea的value
+        editor.sync();
+        html = document.getElementById('editor_id').value; // 原生API
+        html = K('#editor_id').val(); // KindEditor Node API
+        html = $('#editor_id').val(); // jQuery
+
+        // 设置HTML内容
+        editor.html('HTML内容');
+        // 关闭过滤模式，保留所有标签
+        KindEditor.options.filterMode = false;
+
+        KindEditor.ready(function(K){
+            K.create('#editor_id');
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //上传图片
+        $('#picture').fileinput({
+            language: 'zh',　　　　　　　　//使用中文
+            theme: 'fa',
+            showUpload: false,　　　　　　//upload按钮不显示
+            uploadUrl: '',//'@Url.Action("ImageRecive", "BeadHouse")',   //服务器url调用路径
+            allowedFileExtensions: ['jpg', 'png', 'gif'],　　　　//允许的文件格式
+            overwriteInitial: false,
+            maxFileSize: 1000,　　　　　　　　　　　　　　　　　　　　//文件最大尺寸
+            maxFilesNum: 3,　　　　　　　　　　　　　　　　　　　　　　//文件最大数量
+            slugCallback: function (filename) {
+                return filename.replace('(', '_').replace(']', '_');
+            },
+        });
+
+        //js的消息响应处理
+        $("#uploadFile").on("fileuploaded", function (event, data, previewId, index) {
+            var d = data.response;//接收后台返回的数据
+            if (d.Code == 1) {
+                var bToObj = JSON.parse(d.Record);
+
+                if (bToObj[0] != null) {
+
+                    var test = window.location.origin + window.location.pathname;
+                    var imgid = bToObj[0];
+
+                }
+            }
+            else {
+                $.alert(d.Message);
+            }
+        });
+    </script>
+</head>
+<body style="width: 1145px; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+<form>
+    <div id="container">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; background: indianred; border: none;">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" style="color: white;" href="#"><b>新增法律法规</b></a>
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="navbar navbar-default" style="background: white; border: none; padding: 20px; border-radius: unset; margin: -25px auto; text-align: center;">
+                <div>标题：<input id="name" type="title" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入标题"></div>
+                <div>简介：<input id="introduction" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入简介"></div>
+                <!--<form enctype="multipart/form-data" action="" >-->
+                <div style="margin-left: 12%">
+                    <div style="margin-bottom: 25px;float: left;">封面：
+                        <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                            <input id="picture" type="file" multiple class="file" style="" data-overwrite-initial="false" data-min-file-count="1">
+                        </div>
+                    </div>
+                </div>
+                <!--</form>-->
+                <div style="margin-left: 23%; margin-bottom: 200px;">
+                    <div style="float: left;">内容：
+                        <div style="float: right">
+                            <textarea id="editor_id" name="content" style="width:83%;height:300px;"></textarea>
+                        </div>
+                        <!--<textarea id="contentText" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 120px; vertical-align:top" placeholder="请输入内容"></textarea>-->
+                    </div>
+                </div>
+                <div style="margin-left: 12%;">
+                    <div style="margin-top: 25px;float: left;">附件：
+                        <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                            <input id="fujian" type="file" multiple class="file" style="" data-overwrite-initial="false" data-min-file-count="1" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请选择附件">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: right; width: 60%; margin:  auto;">
+                    <div style="margin-top: 65%;padding-right: 28px;">
+                        <button type="button" class="btn btn-danger" id="sure">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+$(function(){
+	var data = store.get("data");
+	store.set("data","")
+	console.log(data)
+	if(data){
+		$("#name").val(data.lawTitle)	
+	}
+})
+    $("#sure").click(function(){
+        editor.sync();
+        var param={};
+        var law = {};
+        law.lawTitle = $("#name").val();
+        law.lawContent = $('#editor_id').val();
+        law.synopsis = $("#introduction").val();
+        law.cover = $("#picture").val();
+        law.type = 1;
+        param.law = law;
+        var source = [];
+        $.ajax({
+            type : "post",
+            url : Constants.path+"law/addLaw",
+            data : JSON.stringify(param),
+            dataType : "json",
+            contentType : "application/json",
+            success : function(data) {
+                alert("新增成功！")
+                window.location.href='law.html';
+            }
+        })
+    })
+</script>
+</body>
+</html>

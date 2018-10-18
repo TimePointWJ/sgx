@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>通讯录</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap-table.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <style>
+        #table1 {
+            border: none;
+        }
+
+        #part2 div,
+        #part2 table {
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a {
+            width: 50px;
+        }
+
+        /*复选框样式调整*/
+
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        .no-records-found:hover {
+            color: red;
+        }
+
+        #action a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left: 5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+
+        .squaredFour input[type=checkbox]:checked+label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background", "whitesmoke");
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+            sessionStorage.setItem('pageInfoArr', '')
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        // checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck() {
+            if (isCheckAll) {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = false;
+                });
+                isCheckAll = false;
+            } else {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = true;
+                });
+                isCheckAll = true;
+            }
+        }
+
+
+        /*页面复选框刷新*/
+        var page = 1;
+
+        function count(that) {
+            var pageInfoArr = sessionStorage.getItem('pageInfoArr')
+            if (pageInfoArr) {
+                pageInfoArr = JSON.parse(pageInfoArr)
+                pageInfoArr.forEach(function (pageInfo) {
+                    if (pageInfo.page === page) {
+                        if (!that.checked) {
+                            //that.checked = false
+                            pageInfo.checked.splice(pageInfo.checked.indexOf(that.id), 1)
+                        } else {
+                            //that.checked = true
+                            pageInfo.checked.push(that.id)
+                        }
+                        sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+                        return;
+                    }
+                })
+                var pageObj = {}
+                pageObj.page = page;
+
+                pageObj.checked = [];
+
+                if (!that.checked) {
+                    //that.checked = false
+                    pageObj.checked.splice(pageObj.checked.indexOf(that.id), 1)
+                } else {
+                    //that.checked = true
+                    pageObj.checked.push(that.id)
+                }
+
+                pageInfoArr.push(pageObj)
+                sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+            } else {
+                pageInfoArr = []
+                var pageObj = {}
+                pageObj.page = page;
+
+                pageObj.checked = [];
+
+                if (!that.checked) {
+                    //that.checked = false
+                    pageObj.checked.splice(pageObj.checked.indexOf(that.id), 1)
+                } else {
+                    //that.checked = true
+                    pageObj.checked.push(that.id)
+                }
+                pageInfoArr.push(pageObj)
+                sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+            }
+        }
+
+//        $.ajax({
+//            type : "post",
+//            url : Constants.path+"phoneBook/getBook",
+//            data : JSON.stringify(param),
+//            dataType : "json",
+//            contentType : "application/json",
+//            success : function(data) {
+//                ractive.set("data",data.data)
+//            }
+//        })
+
+
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" style="color: #000;">
+                            <b>通讯录</b>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                    <div id="condition">
+                        <div style="margin-bottom: 15px; display: inline;">
+                            <span>关键词：
+                                <input id="keyName" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </span>
+                        </div>
+                        <div style="display:inline;margin-left: 50px;">
+                            <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="part2" style="margin:0 auto ">
+            <div id="form" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                    <div id="action" style="margin-top: -25px;">
+                        <a href="#" data-toggle="modal" data-target="#myModal">
+                            <div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!--<a href="#"><div class="icon-trash" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                        <!-- <a href="#">
+                            <div id="delete" class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#"> -->
+                        <a href="#" id="refresh">
+                            <div class="icon-refresh" style="color: red;"></div> 刷新</a>
+                    </div>
+                    <!--弹出新增模态框-->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" style="width: 800px;">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background: indianred; color: white;">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                    <h4 class="modal-title">新增联系人</h4>
+                                </div>
+                                <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;姓名：
+                                        <input id="name" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入姓名">
+                                    </div>
+                                    <div>所属单位：
+                                        <input id="depart" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入所属单位">
+                                    </div>
+                                    <div>联系方式：
+                                        <input id="phone" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入联系方式">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：
+                                        <input id="job" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入职位">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱：
+                                        <input id="E-mail" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入邮箱">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" id="sure">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+
+                    <!--弹出新增模态框-->
+                    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" style="width: 800px;">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background: indianred; color: white;">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                    <h4 class="modal-title">修改联系人</h4>
+                                </div>
+                                <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;姓名：
+                                        <input id="name1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入姓名">
+                                    </div>
+                                    <div>所属单位：
+                                        <input id="depart1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入所属单位">
+                                    </div>
+                                    <div>联系方式：
+                                        <input id="phone1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入联系方式">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：
+                                        <input id="job1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入职位">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱：
+                                        <input id="E-mail1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入邮箱">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" id="sure1">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+
+                    <div class="fixed-table-container" style="padding-bottom: 0px;">
+                        <div class="fixed-table-body">
+                            <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                            <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id"
+                                data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;">
+                                <!--class="table-hover"-->
+                                <thead style="background: whitesmoke;">
+                                    <tr>
+                                        <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" onclick="swapCheck()" value="None" id="1" name="check" />
+                                                        <label for="1"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 70px;" data-field="name" tabindex="0">
+                                            <div class="th-inner">序号</div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">姓名</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">单位</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">职务</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">联系电话</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">电子邮箱</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 150px;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">操作</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody style="" id="addressBookContainer">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="m-style" style="display: block;float: right">
+                            <nav aria-label="Page navigation">
+                                <div id="Pagination" class="pagination">
+
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ractive" id="addressBookTemplate">
+                                {{#if data}}
+                                {{#each data.data : i}}
+                                <tr class="no-records-found">
+                                    <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="{{(data.currPage-1)*5+i+2}}" name="squaredFour"  onclick="count(this)" />
+                                                <label for="{{(data.currPage-1)*5+i+2}}"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">{{(data.currPage-1)*5+i+1}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data.data[i].name}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data.data[i].occupation}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data.data[i].position}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data.data[i].phoneNumber}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data.data[i].mail}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <a href='#' on-click="modify" id="modify" data-toggle="modal" data-target="#myModal1"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="#" on-click="sc"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            {{/each}}
+                            {{/if}}
+
+</script>
+    <script>
+
+        var address_app = function () {
+            var flag = true;
+            var pageSize = 5;
+            var initFlag = true;
+            var ractive;
+            function renderView() {
+                ractive = new Ractive({
+                    el: "#addressBookContainer",
+                    template: "#addressBookTemplate",
+                    onrender: function () { },
+                    data: {
+        				formatD: function(d){
+        					if(d){
+        						return moment(d).format("YYYY-MM-DD HH:mm:ss");
+        					}
+        				}
+        			},
+                    oncomplete: function () {
+
+                        getDataList(1, null)
+
+                    }
+                })
+                ractive.on({
+                    modify: function (obj) {
+                        var row = obj.context;
+                        $("#name1").val(row.name);
+                        $("#depart1").val(row.occupation);
+                        $("#job1").val(row.position);
+                        $("#phone1").val(row.phoneNumber);
+                        $("#E-mail1").val(row.mail)
+                        $("#E-mail1").attr("code", row.id)
+                    },
+                    sc: function (e) {
+                        $.ajax({
+                            url: Constants.path + "phoneBook/removeBook/" + e.context.id,
+                            type: "get",
+                            success: function (response) {
+                                alert("删除成功")
+                                window.location.href = 'addressbook.html';
+                            }
+                        });
+                    }
+                })
+            }
+            $("#btnSearch").click(function () {
+                initFlag = true;
+                getDataList(1, null)
+            });
+            $("#refresh").click(function () {
+                window.location.href = 'addressbook.html';
+            });
+            var getDataList = function (currPage, jg) {
+                var param = { pageSize: pageSize, page: currPage }
+                param.name = $("#keyName").val();
+                param.startTime = $("#startTime").val();
+                param.endTime = $("#endTime").val();
+                $.ajax({
+                    url: Constants.path + "phoneBook/getBook",
+                    type: "post",
+                    dataType: 'json',
+                    data: JSON.stringify(param),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response) {
+
+                            $("#Pagination").pagination(
+                                {
+                                    pageCount: Math.ceil(response.total / pageSize),
+                                    totalData: response.total,
+                                    showData: pageSize,
+                                    callback: function (api) {
+                                        page = api.getCurrent()
+                                        getDataList(api.getCurrent(), null)
+                                    }//回调函数
+                                });
+                            initFlag = false;
+                            
+                            page = currPage
+                            ractive.set("data", response);
+                            Array.from(document.getElementsByTagName('input')).forEach(function (obj) {
+                                obj.checked = false
+                            })
+                            if (sessionStorage.getItem('pageInfoArr')) {
+                                var pageInfoArr = JSON.parse(sessionStorage.getItem('pageInfoArr'))
+                                pageInfoArr.forEach(function (currentPageInfo) {
+                                    if (currentPageInfo.page == currPage) {
+                                        if (currentPageInfo.checked.length > 0) {
+                                            currentPageInfo.checked.forEach(function (checkBox) {
+                                                if (checkBox) {
+                                                    document.getElementById(checkBox).checked = true;
+                                                }
+                                            })
+                                        }
+                                    }
+
+                                })
+                            }
+
+
+
+
+
+
+                        } else {
+                            //暂无数据
+                        }
+
+                    }
+                });
+            }
+            $("#sure").click(function () {
+                var param = {};
+                param.name = $("#name").val();
+                param.occupation = $("#depart").val()
+                param.position = $("#job").val();
+                param.phoneNumber = $("#phone").val();
+                param.mail = $("#E-mail").val()
+                $.ajax({
+                    type: "post",
+                    url: Constants.path + "phoneBook/addBook",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#name").val("");
+                        $("#depart").val("");
+                        $("#job").val("");
+                        $("#phone").val("");
+                        $("#E-mail").val("");
+                        alert("新增成功！")
+                        $('#myModal').modal('hide');
+                        getDataList(1, null)
+                        // window.location.href='http://www.baidu.com';
+                    }
+                })
+            })
+            $("#sure1").click(function () {
+                var param = {};
+                param.name = $("#name1").val();
+                param.occupation = $("#depart1").val()
+                param.position = $("#job1").val();
+                param.phoneNumber = $("#phone1").val();
+                param.mail = $("#E-mail1").val()
+                param.id = $("#E-mail1").attr("code");
+                $.ajax({
+                    type: "post",
+                    url: Constants.path + "phoneBook/modifyBook",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#name1").val("");
+                        $("#depart1").val("");
+                        $("#job1").val("");
+                        $("#phone1").val("");
+                        $("#E-mail1").val("");
+                        alert("修改成功！")
+                        $('#myModal1').modal('hide');
+                        getDataList(1, null)
+                        // window.location.href='http://www.baidu.com';
+                    }
+                })
+            })
+            return {
+                init: function () {
+                    renderView();
+                }
+            }
+        }();
+        $(document).ready(
+            address_app.init
+
+        )
+    </script>
+</body>
+
+</html>

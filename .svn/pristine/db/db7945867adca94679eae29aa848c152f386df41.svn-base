@@ -1,0 +1,12 @@
+package com.jtzh.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.jtzh.entity.UnionResult;
+
+public interface UnionResultMapper {
+	List<UnionResult> selectResult(@Param("source")String source,@Param("sourceId")String sourceId);
+	void insertResult(UnionResult unionResult);
+}

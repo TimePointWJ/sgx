@@ -1,0 +1,130 @@
+package com.jtzh.service;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.common.page.Page;
+import com.jtzh.entity.UnionLaw;
+import com.jtzh.entity.UnionSource;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.mapper.UnionLawMapper;
+import com.jtzh.mapper.UnionSourceMapper;
+import com.jtzh.pojo.LawParam;
+import com.jtzh.pojo.ViewLaw;
+
+@Service("lawService")
+public class LawServiceImpl implements LawService {
+
+	@Resource
+	private UnionLawMapper unionLawMapper;
+	
+	@Resource
+	private UnionSourceMapper unionSourceMapper;
+	
+	@Resource
+	private UnionSourceMapper UnionSourceMapper;
+	@Override
+	public Object getLawList(LawParam param) {
+		Page page = new Page();
+		page.setCurrPage(param.getPage());
+		page.setPageSize(param.getPageSize());
+		page.setParam(param);
+		int total = unionLawMapper.selectTotal(page);
+		if(total>0) {
+			List<UnionLaw> list = unionLawMapper.selectLawList(page);
+			page.setTotal(total);
+			page.setData(list);
+		}
+		return page;
+	}
+
+	@Override
+	public ResultObject getLaw(String type, String id) {
+		ViewLaw viewlaw = new ViewLaw();
+		UnionLaw law = unionLawMapper.selectLaw(type, id);
+		viewlaw.setLaw(law);
+		viewlaw.setSource(UnionSourceMapper.selectSource("03", id));
+		ResultObject obj = new ResultObject();
+		obj.setObj(viewlaw);
+		return obj;
+	}
+
+	@Override
+	public ResultObject removeLaw(String id) {
+		unionLawMapper.updateLaw(id);
+		UnionSourceMapper.removeSource("03",id);
+		return new ResultObject();
+	}
+
+	@Override
+	public ResultObject insertLaw(UnionUser user,ViewLaw view) {
+		
+		
+		UnionLaw law = view.getLaw();
+		law.setCreateName(user.getUserName());
+		law.setCreateTime(new Date());
+		law.setReadNum(0);
+		law.setDelflag("A");
+		unionLawMapper.insertLaw(law);
+
+		List<UnionSource> list = view.getSource();
+		if (list != null && list.size() > 0) {
+			for (UnionSource source : list) {
+				source.setCreatTime(new Date());
+				source.setDelflag("A");
+				source.setAttachmentSource("01");
+				source.setSourceId(law.getId());
+				unionSourceMapper.insertSource(source);
+			}
+		}
+
+		if (law.getFj() != null && law.getFj().length() != 0) {
+			UnionSource source = new UnionSource();
+			source.setCreatTime(new Date());
+			source.setDelflag("A");
+			source.setAttachmentSource("01");
+			source.setSourceId(law.getId());
+			source.setFileName(law.getFj());
+			source.setFileUrl("D\\ynw\\" + law.getFj());
+			unionSourceMapper.insertSource(source);
+		}
+		return new ResultObject();
+	}
+
+	@Override
+	public ResultObject updateLaw(ViewLaw view) {
+		UnionLaw law = view.getLaw();
+		unionLawMapper.updateLaws(law);
+		unionSourceMapper.removeSource("03",law.getId());
+		List<UnionSource> list = view.getSource();
+		/*
+		 * if(list!=null && list.size()>0) { for(UnionSource source : list) {
+		 * source.setCreatTime(new Date()); source.setDelflag("A");
+		 * source.setSourceId(law.getId());
+		 * unionSourceMapper.insertSource(source); } }
+		 */
+		if (law.getFj() != null && law.getFj().length() != 0) {
+			UnionSource source = new UnionSource();
+			source.setCreatTime(new Date());
+			source.setDelflag("A");
+			source.setAttachmentSource("01");
+			source.setSourceId(law.getId());
+			source.setFileName(law.getFj());
+			source.setFileUrl("D\\ynw\\" + law.getFj());
+			unionSourceMapper.insertSource(source);
+		}
+		return new ResultObject();
+	}
+
+	@Override
+	public Object updateReadNum(String id) {
+		unionLawMapper.updateReadNum(id);
+		return new ResultObject();
+	}
+
+}

@@ -1,0 +1,65 @@
+package com.jtzh.service;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.common.page.Page;
+import com.jtzh.entity.UnionUnion;
+import com.jtzh.mapper.UnionUnionMapper;
+import com.jtzh.pojo.UnitParam;
+
+@Service("unitService")
+public class UnitManagementServiceImpl implements UnitManagementService {
+	@Resource
+	private UnionUnionMapper unitMapper;
+
+	@Override
+	public Object getUnitList(UnitParam param) {
+		Page page = new Page();
+		page.setCurrPage(param.getPage());
+		page.setPageSize(param.getPageSize());
+		page.setParam(param);
+		int total = unitMapper.selectTotal(page);
+		if (total > 0) {
+			List<UnionUnion> list = unitMapper.selectUnitList(page);
+			page.setTotal(total);
+			page.setData(list);
+		}
+		return page;
+	}
+
+	@Override
+	public Object insertUnit(UnionUnion param) {
+		param.setDelflag("A");
+		param.setCreateTime(new Date());
+		System.out.println(param.getSuperiorUnionName());
+		UnionUnion unit = unitMapper.getUnitByName(param.getSuperiorUnionName());
+		System.out.println(unit.getId());
+		param.setSuperiorUnionId(unit.getId());
+		unitMapper.insertSelective(param);
+		return new ResultObject();
+	}
+
+	@Override
+	public Object updateUnit(UnionUnion param) {
+		param.setDelflag("A");
+		// System.out.println(param.getSuperiorUnionName());
+		UnionUnion unit = unitMapper.getUnitByName(param.getSuperiorUnionName());
+		// System.out.println(unit.getId());
+		param.setSuperiorUnionId(unit.getId());
+		unitMapper.updateByPrimaryKeySelective(param);
+		return new ResultObject();
+	}
+
+	@Override
+	public Object deleteUnit(String id) {
+		unitMapper.updateUnit(id);
+		return new ResultObject();
+	}
+
+}

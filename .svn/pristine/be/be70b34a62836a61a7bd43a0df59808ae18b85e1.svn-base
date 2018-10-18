@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>苏工会-主页</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <!--<link rel="stylesheet" href="../css/ApplyOrg.css">-->
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style class="text/css">
+        *{
+            font-family: 微软雅黑;
+        }
+
+        body{
+            background-color: whitesmoke;
+            overflow: scroll;
+            margin: 0;
+            padding: 0;
+        }
+
+        #left{
+            background: snow;
+            width: 16%;
+            height: 100%;
+            box-shadow: 1px 1px 1px 1px lightgrey;
+            float: left;
+            clear: none;
+        }
+
+        #right{
+            margin-left: 0px;
+            float:left;
+            /*width: 1200px;*/
+            width: 83.9%;
+
+        }
+
+        img{
+            width: 18px;
+            height: 18px;
+        }
+
+        #daohang a{
+            color: #000;
+            text-decoration: none;
+        }
+
+        #daohang a:hover{
+            color: red;
+        }
+
+        .menus {
+            width: 100%;
+            overflow: hidden;
+            margin-top: -22px;
+        }
+
+        .menu {
+            overflow: hidden;
+            height: 0px;
+        }
+
+        .menu_title {
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            color: black;
+            font-size: 15px;
+            padding-left: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            font-weight: normal;
+            overflow: hidden;
+        }
+
+        .menu_title:hover {
+            background: #e6f1fe;
+            color: red;
+            border-right: 4px solid red;
+        }
+
+        .indicator {
+            width: 50px;
+            height: 30px;
+            font-weight: bold;
+            position: absolute;
+            right: 0px;
+            top: 4px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-align: center;
+        }
+        .indicator1 {
+            width: 50px;
+            height: 20px;
+            font-weight: bold;
+            position: absolute;
+            right: 0px;
+            top: 4px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-align: center;
+        }
+        .item {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            color: black;
+            padding-left: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .item1 {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            color: black;
+            padding-left: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .item:hover {
+            background: #e6f1fe;
+            border-right: 4px solid red;
+        }
+
+        .item a:hover {
+            color: red;
+        }
+
+        .item a {
+            width: 100%;
+            height: 40px;
+            display: block;
+            text-decoration: none;
+            color: black;
+            margin-left: 12px;
+        }
+
+        .item_divider {
+            width: 100%;
+            height: 1px;
+            background: white;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .menu_divider {
+            width: 100%;
+            height: 1px;
+            background: white;
+        }
+
+        #biaoti{
+            margin-left: 20px;
+        }
+
+        li{
+            list-style: none;
+        }
+    </style>
+    <script type="text/javascript">
+        var itemHeight = 30;
+        var dividerHeight = 1;
+        $(function () {
+            $("#timer").html(new Date().toLocaleDateString());
+            var w = window.screen.width;
+            var zoom = w / 1920;
+            $("#container").css({
+                "zoom": zoom,
+                "-moz-transform": "scale(" + zoom + ")",
+                "-moz-transform-origin": "top left"
+            })
+            //父菜单子菜单点击效果
+            $("#left .menu_title").click(function () {
+                var id=$(this).attr("id");
+                $("#"+id).css({"background": "#e6f1fe"},{"color": "red"},{"border-right": "4px solid red"});
+                $("#left .menus div:not('#"+id+"')").css({"background": "none"},{"color": "black"},{"border-right": "none"});
+                var name=$(this).attr("name");
+                if (name!=null && typeof(name)!="undefined"){
+                    $("iframe").attr("src",name+".html");
+                }
+            })
+
+            $("#left .item").click(function () {
+                var id=$(this).attr("id");
+                $(this).css({"background": "#e6f1fe"},{"color": "whitesmoke"},{"border-right": "4px solid red"});
+                $("#left .menus div:not('#"+id+"')").css({"background": "none"},{"color": "black"},{"border-right": "none"});
+
+                var name=$(this).attr("name");
+                if (name!=null && typeof(name)!="undefined"){
+                    $("iframe").attr("src",name+".html");
+                }
+
+            })
+
+
+
+        })
+        function openMenu(obj) {
+            menuTitleId = obj.id;
+            menuId = "menu" + menuTitleId.substring(10);
+            indicatorId = "indicator" + menuTitleId.substring(10);
+            menu = document.getElementById(menuId);
+            indicator = document.getElementById(indicatorId);
+            height = menu.style.height;
+
+            if (height == "0px" || height == "") {
+                childAmount = menu.getElementsByTagName('div').length;
+                dividerAmount = menu.getElementsByTagName('li').length;
+                height = childAmount * itemHeight + dividerAmount * dividerHeight;
+                menu.style.height = height + "px";
+                indicator.style.transform = "rotate(180deg)";
+            } else {
+                menu.style.height = "0px";
+                indicator.style.transform = "rotate(0deg)";
+            }
+        }
+
+        function openmenu(obj) {
+            menuTitleId = obj.id;
+            menuId = "menu9";
+            indicatorId = "indicator9";
+
+            menu = document.getElementById(menuId);
+            indicator = document.getElementById(indicatorId);
+            height = menu.style.height;
+
+            if (height == "0px" || height == "") {
+                childAmount = menu.getElementsByTagName('div').length;
+                dividerAmount = menu.getElementsByTagName('li').length;
+                height = childAmount * itemHeight + dividerAmount * dividerHeight;
+                menu.style.height = height + "px";
+                indicator.style.transform = "rotate(180deg)";
+            } else {
+                menu.style.height = "0px";
+                indicator.style.transform = "rotate(0deg)";
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div id="left" style="position:relative; margin-right: 0px;width: 15%">
+    <div  style="position: fixed; background-color: #fff;z-index: 9">
+    <div style="height: 203px;width: 203px">
+        <div id="header" style="width: 100%;height: 200px; padding-top: 20px; text-align:center;">
+            <div><img src="../images/tou.jpg" style="width: 100px; height:100px; -webkit-border-radius: 50%; border: 2px solid darkgrey;"></div>
+            <div><span id="userName" style="margin-top:25px; font-size: 15px; margin-left: -5px;">admin</span></div>
+            <div><label id="timer" style="width: 120px;"></label></div>
+        </div>
+    </div>
+    </div>
+
+    <div class="menus" style="margin-top:205px ;display: block">
+
+        <div id="menu-title1" class="menu_title" onclick="openMenu(this)">
+            <!--<img src="../images/zhengce.png" alt="">-->
+            <span class="icon-book" style="color: black;"></span>&nbsp;&nbsp;政策法规
+            <div class="indicator" id="indicator1">ˇ</div>
+        </div>
+        <div class="menu" id="menu1">
+            <div id="menu1-1" class="item" name="law">
+                <a href="#">法律法规</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu1-2" class="item" name="UnionFile">
+                <a href="#">工会文件</a>
+            </div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title2" class="menu_title" onclick="openMenu(this)">
+            <!--<img src="../images/bushu.png" alt="">-->
+            <span class="icon-cogs" style="color: black;"></span>&nbsp;&nbsp;工作部署
+            <div class="indicator" id="indicator2">ˇ</div>
+        </div>
+        <div class="menu" id="menu2">
+            <div id="menu2-1" class="item" name="OrgWork">
+                <a href="#">组织工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-2" class="item" name="NetWork">
+                <a href="#">宣传网络工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-3" class="item" name="LawWork">
+                <a href="#">法律工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-4" class="item" name="LaborWork">
+                <a href="#">劳动和经济工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-5" class="item" name="WomenWork">
+                <a href="#">女职工工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-6" class="item" name="InterestWork">
+                <a href="#">权益保障工作</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu2-7" class="item" name="FinancialWork">
+                <a href="#">财务经审工作</a>
+            </div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title3" class="menu_title" onclick="openMenu(this)" name="notice">
+            <!--<img src="../images/tongzhi.png" alt="">-->
+            <span class="icon-bullhorn" style="color: black;"></span>&nbsp;&nbsp;会议通知
+            <div class="indicator" id="indicator3"></div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title4" class="menu_title" onclick="openMenu(this)">
+            <!--<img src="../images/huanjie.png" alt="">-->
+            <span class="icon-user" style="color: black;"></span>&nbsp;&nbsp;组建•换届•届中
+            <div class="indicator" id="indicator4">ˇ</div>
+        </div>
+        <div class="menu" id="menu4">
+            <div id="menu4-1" class="item" name="MainMenuElection">
+                <a href="#">组建选举</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu4-2" class="item" name="MainMenuExchange">
+                <a href="#">换届选举</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu4-3" class="item menu_title" onclick="openmenu(this)">
+                <a href="#">届中选举</a>
+                <span class="indicator1" id="indicator9">ˇ</span>
+            </div>
+
+        </div>
+        <div class="menu" id="menu9">
+            <div id="menu9-1" class="item item1" name="Chairman">
+                <a href="#">主席•经审主任（委员）</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu9-2" class="item item1" name="NotChairman">
+                <a href="#">主席•经审主任（非委员）</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu9-3" class="item item1" name="Committee">
+                <a href="#">委员（增/替补）</a>
+            </div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title5" class="menu_title" onclick="openMenu(this)" name="formdown">
+            <!--<img src="../images/biaodan.png" alt="">-->
+            <span class="icon-cloud-download" style="color: black;"></span>&nbsp;&nbsp;表单下载
+            <div class="indicator" id="indicator5"></div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title6" class="menu_title" onclick="openMenu(this)" name="addressbook">
+            <!--<img src="../images/tongxun.png" alt="">-->
+            <span class="icon-group" style="color: black;"></span>&nbsp;&nbsp;通讯录
+            <div class="indicator" id="indicator6"></div>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title7" class="menu_title" onclick="openMenu(this)">
+            <!--<img src="../images/guanli.png" alt="">-->
+            <span class="icon-cog" style="color: black;"></span>&nbsp;&nbsp;运维管理
+            <div class="indicator" id="indicator7">ˇ</div>
+        </div>
+        <div class="menu" id="menu7">
+      <!--       <div id="menu7-1" class="item" name="UnionManage">
+                <a href="#">工会管理</a>
+            </div> -->
+            <li class="item_divider"></li>
+            <div id="menu7-2" class="item" name="CompanyManage">
+                <a href="#">单位管理</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu7-3" class="item" name="PersonManage">
+                <a href="#">人员管理</a>
+            </div>
+            <li class="item_divider"></li>
+        </div>
+
+        <li class="menu_divider"></li>
+
+        <div id="menu-title8" class="menu_title" onclick="openMenu(this)">
+            <!--<img src="../images/guanli.png" alt="">-->
+            <span class="icon-user" style="color: black;"></span>&nbsp;&nbsp;个人中心
+            <div class="indicator" id="indicator8">ˇ</div>
+        </div>
+        <div class="menu" id="menu8">
+            <div id="menu8-1" class="item" name="Information">
+                <a href="#">个人信息</a>
+            </div>
+            <li class="item_divider"></li>
+            <div id="menu8-2" class="item" name="Password">
+                <a href="#">修改密码</a>
+            </div>
+            <li class="item_divider"></li>
+        </div>
+    </div>
+</div>
+<div id="right" style="position: relative; width: 85%;">
+    <div style="position: fixed; width: 85%;top: 0px;height: 100%;background-color: #fff;">
+    <div id="head" style="font-size: 20px; height: 65px; line-height: 65px; background: url(../images/bar1.jpg) no-repeat;background-size:100% auto; width: 100%">
+        <div id="biaoti" style="">
+            <div>
+                <button type="button" class="btn btn-default icon-off" id="exit" style="position: relative; top: -3px; left:85%; background: none; color: white; border: 1px solid white;">
+                    退出登录
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--<div id="daohang" style="font-size: 16px; margin-top: 18px;margin-left: 20px;"><a href="#">首页</a> > <a href="#">通讯录</a></div>-->
+    <!--<iframe id="mainframe" name="mainframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="ApplyOrg.html" style="width: 1168px; margin-top: 15px; margin-left: 50px;"></iframe>-->
+    <iframe border="0" marginWidth="0" frameSpacing="0" marginHeight="0" src="law.html" frameBorder="0" noResize  vspale="0" width="100%" id="childFrame" style="width: 98%;height:90%; margin-top: 15px; margin-left: 10px;" scrolling="yes"></iframe>
+    </div>
+</div>
+</body>
+</html>

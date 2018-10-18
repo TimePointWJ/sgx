@@ -1,0 +1,12 @@
+package com.jtzh.mapper;
+
+
+import com.jtzh.entity.UnionUser;
+import org.apache.ibatis.annotations.Param;
+
+
+public interface UnionUserMapper {
+    int insert(UnionUser record);
+    UnionUser getUser(@Param("loginId") String loginId);
+    int insertSelective(UnionUser record);
+}

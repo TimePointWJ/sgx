@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionResultMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionResult">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="source" jdbcType="CHAR" property="source" />
+    <result column="source_id" jdbcType="INTEGER" property="sourceId" />
+    <result column="department" jdbcType="VARCHAR" property="department" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="result" jdbcType="VARCHAR" property="result" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, source, source_id, department, description, note, result, create_name, create_time, 
+    delflag
+  </sql>
+  
+    <select id="selectResult" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_result
+    where delflag !='D' and source = #{source} and source_id = #{sourceId} order by create_time desc
+  </select>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_result
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_result
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertResult" parameterType="com.jtzh.entity.UnionResult">
+    insert into union_result (id, source, source_id, 
+      department, description, note, 
+      result, create_name, create_time, 
+      delflag)
+    values (#{id,jdbcType=INTEGER}, #{source,jdbcType=CHAR}, #{sourceId,jdbcType=INTEGER}, 
+      #{department,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, 
+      #{result,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{delflag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionResult">
+    insert into union_result
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="source != null">
+        source,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="department != null">
+        department,
+      </if>
+      <if test="describe != null">
+        describe,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="result != null">
+        result,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="department != null">
+        #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionResult">
+    update union_result
+    <set>
+      <if test="source != null">
+        source = #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="department != null">
+        department = #{department,jdbcType=VARCHAR},
+      </if>
+      <if test="describe != null">
+        describe = #{describe,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionResult">
+    update union_result
+    set source = #{source,jdbcType=CHAR},
+      source_id = #{sourceId,jdbcType=INTEGER},
+      department = #{department,jdbcType=VARCHAR},
+      describe = #{describe,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
+      result = #{result,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

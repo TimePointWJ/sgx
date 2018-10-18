@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>人员管理</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <style>
+        #table1{
+            border: none;
+        }
+        #part2 div, #part2 table{
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a{
+            width: 50px;
+        }
+        /*复选框样式调整*/
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+        .no-records-found:hover{
+            color:red;
+        }
+
+        #action a{
+            text-decoration: none;
+            color: black;
+        }
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left:5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+        .squaredFour input[type=checkbox]:checked + label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background","whitesmoke");
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck() {
+            if (isCheckAll) {
+                $("input[type='checkbox']").each(function() {
+                    this.checked = false;
+                });
+                isCheckAll = false;
+            } else {
+                $("input[type='checkbox']").each(function() {
+                    this.checked = true;
+                });
+                isCheckAll = true;
+            }
+        }
+
+        //分页代码
+        var pageSize = 5;
+        var page = 1;
+        var initFlag = true;
+        var getDataList = function (currPage,jg) {
+            var param = {pageSize : pageSize,page : currPage}
+            $.ajax({
+                url : Constants.path+"phoneBook/getBook",
+                type : "post",
+                dataType : 'json',
+                data : JSON.stringify(param),
+                contentType : "application/json",
+                success : function(response) {
+                    console.log(response)
+                    if (response) {
+                        if (response.data != null && response.data != "") {
+                            if (initFlag) {
+                                $("#Pagination").pagination(
+                                        {
+                                            pageCount : Math.ceil(response.total/pageSize),
+                                            totalData : response.total,
+                                            showData : pageSize,
+                                            callback : function (api) {
+                                                getDataList(api.getCurrent(),null)
+                                            }//回调函数
+                                        });
+                                initFlag = false;
+                            }
+                            ractive.set("data",response.data);
+                        } else {
+                            //暂无数据
+                        }
+                    } else {
+                        //暂无数据
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+<div id="container ">
+    <div id="part1">
+        <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+            <div class="container-fluid" style="border-left:6px solid red;">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" style="color: #000;"><b>人员管理</b></a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div id="part2" style="margin:0 auto " >
+        <div id="form" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+            <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                <div id="action" style="margin-top: -25px;">
+                    <a href="#" data-toggle="modal" data-target="#myModal"><div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-refresh" style="color: red;"></div> 刷新</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-upload-alt" style="color: red;"></div> 导出</a>
+                </div>
+                <!--弹出新增模态框-->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width: 800px;">
+                        <div class="modal-content">
+                            <div class="modal-header"  style="background: indianred; color: white;">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                <h4 class="modal-title">新增人员</h4>
+                            </div>
+                            <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户：<input id="name" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入用户名称"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;账号：<input id="account" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入账号"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码：<input id="password" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入密码"></div>
+                                <div>所属单位：<input id="firm" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入单位名称"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：<input id="position" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入职位"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;角色：<input id="role" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入角色"></div>
+                                <div>联系方式：<input id="telephone" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入联系方式"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注：<textarea style="vertical-align: top;;border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 100px;" placeholder="请输入备注"></textarea></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger">确定</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <div class="fixed-table-container" style="padding-bottom: 0px;">
+                    <div class="fixed-table-body">
+                        <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                        <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;"> <!--class="table-hover"-->
+                            <thead style="background: whitesmoke;">
+                            <tr>
+                                <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" onclick="swapCheck()" value="None" id="1" name="check" >
+                                                <label for="1"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner">用户</div>
+                                </th>
+                                <th style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner">账号</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">上级工会</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;width: 190px;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">所属单位</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">职务</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">角色</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="performance" tabindex="0">
+                                    <div class="th-inner">联系方式</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">备注</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;width: 200px;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">操作</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody style="">
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="2" name="squaredFour"  />
+                                                <label for="2"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州创客峰汇</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">经理</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="3" name="squaredFour"  />
+                                                <label for="3"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州高新区企业集团</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">经理</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色2</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="4" name="squaredFour"  />
+                                                <label for="4"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州一点创意文化集团</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">文员</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色3</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="5" name="squaredFour"  />
+                                                <label for="5"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州晶太电子有限公司</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">策划</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="6" name="squaredFour"  />
+                                                <label for="6"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">中铁十七局</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">顾问</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色3</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="7" name="squaredFour"  />
+                                                <label for="7"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州高新区创业园</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">设计</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="8" name="squaredFour"  />
+                                                <label for="8"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州众创空间</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">测试</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="9" name="squaredFour"  />
+                                                <label for="9"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州高新区企业集团</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">经理</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                    <div class="th-inner ">
+                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                        <section title=".squaredFour">
+                                            <!-- .squaredFour -->
+                                            <div class="squaredFour">
+                                                <input type="checkbox" value="None" id="10" name="squaredFour"  />
+                                                <label for="10"></label>
+                                            </div>
+                                            <!-- end .squaredFour -->
+                                        </section>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">张大大</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">123456789</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">苏州高新区企业集团</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">经理</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">角色1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">158xxxxxxxx</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">1</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable " style="display:inline;">
+                                        <input type="button" class="btn btn-danger" value="查看">
+                                        <input type="button" class="btn btn-danger" value="修改">
+                                        <input type="button" class="btn btn-danger" value="删除">
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="m-style" style="display: block;float: right">
+                        <nav aria-label="Page navigation">
+                            <div id="Pagination" class="pagination">
+
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionCandidateMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionCandidate">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="com_name" jdbcType="VARCHAR" property="comName" />
+    <result column="registration_number" jdbcType="VARCHAR" property="registrationNumber" />
+    <result column="com_address" jdbcType="VARCHAR" property="comAddress" />
+    <result column="legal_person" jdbcType="VARCHAR" property="legalPerson" />
+    <result column="union_name" jdbcType="VARCHAR" property="unionName" />
+    <result column="contact_info" jdbcType="VARCHAR" property="contactInfo" />
+    <result column="emp" jdbcType="INTEGER" property="emp" />
+    <result column="women_emp" jdbcType="INTEGER" property="womenEmp" />
+    <result column="union_num" jdbcType="INTEGER" property="unionNum" />
+    <result column="women_union_num" jdbcType="INTEGER" property="womenUnionNum" />
+    <result column="year" jdbcType="CHAR" property="year" />
+    <result column="mouth" jdbcType="CHAR" property="mouth" />
+    <result column="day" jdbcType="CHAR" property="day" />
+    <result column="source" jdbcType="CHAR" property="source" />
+    <result column="source_id" jdbcType="INTEGER" property="sourceId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, com_name, registration_number, com_address, legal_person, union_name, contact_info, 
+    emp, women_emp, union_num, women_union_num, year, mouth, day, source, source_id, 
+    create_name, create_id, create_time, delflag
+  </sql>
+  <select id="selectCandidate" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_candidate
+    where delflag != 'D' and source = #{source} and source_id = #{sourceId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_candidate
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jtzh.entity.UnionCandidate">
+	  <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+	          SELECT LAST_INSERT_ID()
+	  </selectKey>
+    insert into union_candidate ( com_name, registration_number, 
+      com_address, legal_person, union_name, 
+      contact_info, emp, women_emp, 
+      union_num, women_union_num, year, 
+      mouth, day, source, source_id, 
+      create_name, create_id, create_time, 
+      delflag)
+    values ( #{comName,jdbcType=VARCHAR}, #{registrationNumber,jdbcType=VARCHAR}, 
+      #{comAddress,jdbcType=VARCHAR}, #{legalPerson,jdbcType=VARCHAR}, #{unionName,jdbcType=VARCHAR}, 
+      #{contactInfo,jdbcType=VARCHAR}, #{emp,jdbcType=INTEGER}, #{womenEmp,jdbcType=INTEGER}, 
+      #{unionNum,jdbcType=INTEGER}, #{womenUnionNum,jdbcType=INTEGER}, #{year,jdbcType=CHAR}, 
+      #{mouth,jdbcType=CHAR}, #{day,jdbcType=CHAR}, #{source,jdbcType=CHAR}, #{sourceId,jdbcType=INTEGER}, 
+      #{createName,jdbcType=VARCHAR}, #{createId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{delflag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionCandidate">
+    insert into union_candidate
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="comName != null">
+        com_name,
+      </if>
+      <if test="registrationNumber != null">
+        registration_number,
+      </if>
+      <if test="comAddress != null">
+        com_address,
+      </if>
+      <if test="legalPerson != null">
+        legal_person,
+      </if>
+      <if test="unionName != null">
+        union_name,
+      </if>
+      <if test="contactInfo != null">
+        contact_info,
+      </if>
+      <if test="emp != null">
+        emp,
+      </if>
+      <if test="womenEmp != null">
+        women_emp,
+      </if>
+      <if test="unionNum != null">
+        union_num,
+      </if>
+      <if test="womenUnionNum != null">
+        women_union_num,
+      </if>
+      <if test="year != null">
+        year,
+      </if>
+      <if test="mouth != null">
+        mouth,
+      </if>
+      <if test="day != null">
+        day,
+      </if>
+      <if test="source != null">
+        source,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="comName != null">
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationNumber != null">
+        #{registrationNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="comAddress != null">
+        #{comAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null">
+        #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="unionName != null">
+        #{unionName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null">
+        #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="emp != null">
+        #{emp,jdbcType=INTEGER},
+      </if>
+      <if test="womenEmp != null">
+        #{womenEmp,jdbcType=INTEGER},
+      </if>
+      <if test="unionNum != null">
+        #{unionNum,jdbcType=INTEGER},
+      </if>
+      <if test="womenUnionNum != null">
+        #{womenUnionNum,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        #{day,jdbcType=CHAR},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionCandidate">
+    update union_candidate
+    <set>
+      <if test="comName != null">
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="registrationNumber != null">
+        registration_number = #{registrationNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="comAddress != null">
+        com_address = #{comAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPerson != null">
+        legal_person = #{legalPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="unionName != null">
+        union_name = #{unionName,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null">
+        contact_info = #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="emp != null">
+        emp = #{emp,jdbcType=INTEGER},
+      </if>
+      <if test="womenEmp != null">
+        women_emp = #{womenEmp,jdbcType=INTEGER},
+      </if>
+      <if test="unionNum != null">
+        union_num = #{unionNum,jdbcType=INTEGER},
+      </if>
+      <if test="womenUnionNum != null">
+        women_union_num = #{womenUnionNum,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        year = #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        mouth = #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        day = #{day,jdbcType=CHAR},
+      </if>
+      <if test="source != null">
+        source = #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionCandidate">
+    update union_candidate
+    set com_name = #{comName,jdbcType=VARCHAR},
+      registration_number = #{registrationNumber,jdbcType=VARCHAR},
+      com_address = #{comAddress,jdbcType=VARCHAR},
+      legal_person = #{legalPerson,jdbcType=VARCHAR},
+      union_name = #{unionName,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      emp = #{emp,jdbcType=INTEGER},
+      women_emp = #{womenEmp,jdbcType=INTEGER},
+      union_num = #{unionNum,jdbcType=INTEGER},
+      women_union_num = #{womenUnionNum,jdbcType=INTEGER},
+      year = #{year,jdbcType=CHAR},
+      mouth = #{mouth,jdbcType=CHAR},
+      day = #{day,jdbcType=CHAR},
+      source = #{source,jdbcType=CHAR},
+      source_id = #{sourceId,jdbcType=INTEGER},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

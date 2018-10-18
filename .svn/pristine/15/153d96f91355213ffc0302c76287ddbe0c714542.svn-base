@@ -1,0 +1,15 @@
+package com.jtzh.service;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.jtzh.entity.UnionUser;
+import com.jtzh.pojo.UserPassword;
+
+public interface UnionUserService {
+
+	Object getUser(HttpServletRequest request, UnionUser user);
+
+	Object updateUser(UnionUser user);
+
+	Object changePassword(UserPassword userPassword);
+}

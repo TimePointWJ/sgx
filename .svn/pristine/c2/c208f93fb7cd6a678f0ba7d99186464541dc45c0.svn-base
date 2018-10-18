@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>表单下载</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <link href="../js/wdDate/wdDate.css" rel="stylesheet" />
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/fileinput.min.js"></script>
+    <script src="../js/fileinput_locale_zh.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <script src="../js/storejson2.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/wdDate/wdDate.js"></script>
+    <script src="../js/moment.min.js"></script>
+    <style>
+        #table1 {
+            border: none;
+        }
+
+        #part2 div,
+        #part2 table {
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a {
+            width: 50px;
+        }
+
+        /*复选框样式调整*/
+
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        .no-records-found:hover {
+            color: red;
+        }
+
+        #action a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left: 5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+
+        .squaredFour input[type=checkbox]:checked+label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background", "whitesmoke");
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+            sessionStorage.setItem('pageInfoArr', '')
+            common.setWdDate("#rq");
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck() {
+            if (isCheckAll) {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = false;
+                });
+                isCheckAll = false;
+            } else {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = true;
+                });
+                isCheckAll = true;
+            }
+        }
+
+        //上传图片
+        // $('#picture').fileinput({
+        //     language: 'zh',　　　　　　　　//使用中文
+        //     theme: 'fa',
+        //     showUpload: false,　　　　　　//upload按钮不显示
+        //     uploadUrl: '',//'@Url.Action("ImageRecive", "BeadHouse")',   //服务器url调用路径
+        //     allowedFileExtensions: ['jpg', 'png', 'gif'],　　　　//允许的文件格式
+        //     overwriteInitial: false,
+        //     maxFileSize: 1000,　　　　　　　　　　　　　　　　　　　　//文件最大尺寸
+        //     maxFilesNum: 3,　　　　　　　　　　　　　　　　　　　　　　//文件最大数量
+        //     slugCallback: function (filename) {
+        //         return filename.replace('(', '_').replace(']', '_');
+        //     },
+        // });
+
+        // //js的消息响应处理
+        // $("#uploadFile").on("fileuploaded", function (event, data, previewId, index) {
+        //     var d = data.response;//接收后台返回的数据
+        //     if (d.Code == 1) {
+        //         var bToObj = JSON.parse(d.Record);
+
+        //         if (bToObj[0] != null) {
+
+        //             var test = window.location.origin + window.location.pathname;
+        //             var imgid = bToObj[0];
+
+        //         }
+        //     }
+        //     else {
+        //         $.alert(d.Message);
+        //     }
+        // });
+
+
+        /*页面复选框刷新*/
+        var page = 1;
+
+        function count(that) {
+            var pageInfoArr = sessionStorage.getItem('pageInfoArr')
+            if (pageInfoArr) {
+                pageInfoArr = JSON.parse(pageInfoArr)
+                pageInfoArr.forEach(function (pageInfo) {
+                    if (pageInfo.page === page) {
+                        if (!that.checked) {
+                            //that.checked = false
+                            pageInfo.checked.splice(pageInfo.checked.indexOf(that.id), 1)
+                        } else {
+                            //that.checked = true
+                            pageInfo.checked.push(that.id)
+                        }
+                        sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+                        return;
+                    }
+                })
+                var pageObj = {}
+                pageObj.page = page;
+
+                pageObj.checked = [];
+
+                if (!that.checked) {
+                    //that.checked = false
+                    pageObj.checked.splice(pageObj.checked.indexOf(that.id), 1)
+                } else {
+                    //that.checked = true
+                    pageObj.checked.push(that.id)
+                }
+
+                pageInfoArr.push(pageObj)
+                sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+            } else {
+                pageInfoArr = []
+                var pageObj = {}
+                pageObj.page = page;
+
+                pageObj.checked = [];
+
+                if (!that.checked) {
+                    //that.checked = false
+                    pageObj.checked.splice(pageObj.checked.indexOf(that.id), 1)
+                } else {
+                    //that.checked = true
+                    pageObj.checked.push(that.id)
+                }
+                pageInfoArr.push(pageObj)
+                sessionStorage.setItem('pageInfoArr', JSON.stringify(pageInfoArr))
+            }
+        }
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" style="color: #000;">
+                            <b>表单下载</b>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                    <div id="condition">
+                        <div style="margin-bottom: 15px; display: inline;">
+                            <span>关键词：
+                                <input id="keyWord" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </span>
+                        </div>
+                        <!-- <div style=" margin-left: 30px; display: inline;">
+                            <span>日期：
+                                <input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </span>
+                            <span>至</span>
+                            <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                        </div> -->
+                        <div style=" margin-left: 30px; display: inline;" id="rq">
+                            <!-- <span>日期：<input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                                <span>至</span>
+                                <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"> -->
+                            <span>日期：</span>
+                            <span>
+                                <input type="text" placeholder="开始时间" style="width:180px" id="startTime" class="Wdate" name="operatetime_s" data-dateformat="yyyy-MM-dd"
+                                />
+                                <label> -- </label>
+                                <input type="text" placeholder="结束时间" style="width:180px" id="endTime" class="Wdate" data-dateformat="yyyy-MM-dd" />
+                            </span>
+                        </div>
+
+                        <div style="display:inline;margin-left: 50px;">
+                            <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch">搜索</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="part2" style="margin:0 auto ">
+            <div id="form" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                    <div id="action" style="margin-top: -25px;">
+                        <a href="#" id="create" data-toggle="modal" data-target="#myModal">
+                            <div class="icon-upload-alt" style="color: red;"></div> 上传</a>&nbsp;&nbsp;&nbsp;
+                        <!-- <a href="#"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp; -->
+                        <a href="#" id="refresh">
+                            <div class="icon-refresh" style="color: red;"></div> 刷新</a>
+                    </div>
+
+
+
+                    <div class="fixed-table-container" style="padding-bottom: 0px;">
+                        <div class="fixed-table-body">
+                            <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                            <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id"
+                                data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;">
+                                <!--class="table-hover"-->
+                                <thead style="background: whitesmoke;">
+                                    <tr>
+                                        <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" onclick="swapCheck()" value="None" id="1" name="check">
+                                                        <label for="1"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 70px;" data-field="name" tabindex="0">
+                                            <div class="th-inner">序号</div>
+                                        </th>
+                                        <th style="text-align: center;width: 400px;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">标题</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 120px;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">下载次数</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 220px;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">上传时间</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <!-- <th style="text-align: center;width: 80px;" data-field="job" tabindex="0">
+                                            <div class="th-inner">下载</div>
+                                            <div class="fht-cell"></div>
+                                        </th> -->
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">操作</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody style="" id="formContainer">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="m-style" style="display: block;float: right">
+                            <nav aria-label="Page navigation">
+                                <div id="Pagination" class="pagination">
+
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--弹出新增模态框-->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="border: 1px solid black; border-radius: 3px;">
+            <div class="modal-dialog" style="width: 800px;">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: indianred; color: white;">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                        <h4 class="modal-title">新增表单下载</h4>
+                    </div>
+                    <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                        <div>标题：
+                            <input id="name" type="title" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                placeholder="请输入标题">
+                        </div>
+                        <div>简介：
+                            <input id="introduction" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                placeholder="请输入简介">
+                        </div>
+                        <!--<form enctype="multipart/form-data" action="" >-->
+                        <!--</form>-->
+                        <div style="margin-left: 12%;">
+                            <div style="margin-top: 5px;float: left;">附件：
+                                <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                                    <!-- <input id="fujian" type="file" multiple class="file" data-overwrite-initial="false" data-min-file-count="1" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                        placeholder="请选择附件"> -->
+                                    <input id="fujian" name="fujian" type="file">
+                                    &nbsp;
+                                    <input type="text" style="border:none;color:#2e6e9e;" readonly="readonly" id="attachmentName_update" value="未选择文件" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-top:none">
+                        <button type="button" class="btn btn-danger" id="sure">确定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    </div>
+    <script type="text/ractive" id="formTemplate">
+                                {{#if data}}
+                                {{#each data.data : i}}
+                                <tr class="no-records-found">
+                                    <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                        <div class="th-inner ">
+                                            <!--<input name="btSelectAll" type="checkbox">-->
+                                            <section title=".squaredFour">
+                                                <!-- .squaredFour -->
+                                                <div class="squaredFour">
+                                                    <input type="checkbox" value="None" id="{{(data.currPage-1)*5+i+2}}" name="squaredFour" onclick="count(this)"  />
+                                                    <label for="{{(data.currPage-1)*5+i+2}}"></label>
+                                                </div>
+                                                <!-- end .squaredFour -->
+                                            </section>
+                                        </div>
+                                        <div class="fht-cell"></div>
+                                    </td>
+                                    <td style="text-align: center;" data-field="name" tabindex="0">
+                                        <div class="th-inner sortable">{{(data.currPage-1)*5+i+1}}</div>
+                                        <div class="fht-cell"></div>
+                                    </td>
+                                    <td style="text-align: center;" data-field="name" tabindex="0">
+                                        <div class="th-inner sortable ">{{data.data[i].formTitle}}</div>
+                                        <div class="fht-cell"></div>
+                                    </td>
+                                    <td style="text-align: center;" data-field="name" tabindex="0">
+                                        <div class="th-inner sortable ">{{data.data[i].downloadMun}}</div>
+                                        <div class="fht-cell"></div>
+                                    </td>
+                                    <td style="text-align: center;" data-field="name" tabindex="0">
+                                        <div class="th-inner sortable ">{{formatD(data.data[i].createTime)}}</div>
+                                        <div class="fht-cell"></div>
+                                    </td>
+                                    <!-- <td style="text-align: center;" data-field="name" tabindex="0">
+                                        <div class="th-inner sortable">
+                                            <a id="d1" href="#" class="icon-download-alt" style="color: red;"></a>
+                                        </div>
+                                        <div class="fht-cell"></div>
+                                    </td> -->
+                                    <td style="text-align: center;" data-field="name" tabindex="0">
+                                            <a href="#" id="update" data-toggle="modal" data-target="#myModal" on-click="xg"><div class="icon-edit" style="color: red;" ></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href="#" on-click="sc"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a href="#" on-click="download"><div class="icon-download" style="color: red;"></div> 下载</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                     </td>
+                                </tr>
+                                {{/each}}
+                                {{/if}}
+    </script>
+    <script>
+        $(function () {
+            var p;
+            var setting = {
+                language: 'zh', //设置语言
+                uploadUrl: "../../../file/fileUpload?id=picture", //上传的地址(访问接口地址)
+                allowedFileExtensions: ['jpg', 'png'],//接收的文件后缀
+                //uploadExtraData:{"fileName":"picture"},
+                uploadAsync: true, //默认异步上传
+                showUpload: true, //是否显示上传按钮
+                showRemove: true, //显示移除按钮
+                showPreview: true, //是否显示预览
+                previewSettings: {
+                    image: { width: "221px", height: "160px" },
+                },
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式     
+                dropZoneEnabled: false,//是否显示拖拽区域
+                maxFileCount: 1, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount: true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            };
+
+    		/* if(r.xxytx){
+    			var img = '<img src="http://192.168.31.14:8887/static/'+r.xxytx+'" class="file-preview-image" alt="Desert" title="Desert">';
+    			p.xxytx = r.xxytx;
+    			setting.uploadUrl = setting.uploadUrl + "?fileName="+r.xxytx;
+    			setting.initialPreview = [],
+    			setting.initialPreview.push(img)
+    			setting.initialPreviewAsData = true;	
+    			setting.initialPreviewFileType = "image";
+    			setting.initialPreviewConfig = [{width: "221px", height: "160px"}]
+    		} */
+            $('#picture').fileinput(setting).on("fileuploaded", function (event, data, previewId, index) {
+                $(".file-preview-image").attr("code", data.response.obj)
+            });
+            var setting1 = {
+                language: 'zh', //设置语言
+                uploadUrl: "../../../file/fileUpload?id=fujian", //上传的地址(访问接口地址)
+                allowedFileExtensions: ['doc', 'docx', 'xls', 'xlsx'],//接收的文件后缀
+                //uploadExtraData:{"fileName":"1111"},
+                uploadAsync: true, //默认异步上传
+                showUpload: true, //是否显示上传按钮
+                showRemove: true, //显示移除按钮
+                showPreview: true, //是否显示预览
+                previewSettings: {
+                    image: { width: "221px", height: "160px" },
+                },
+                showCaption: true,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式     
+                dropZoneEnabled: false,//是否显示拖拽区域
+                maxFileCount: 1, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount: true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            };
+
+            /* if(r.xxytx){
+                var img = '<img src="http://192.168.31.14:8887/static/'+r.xxytx+'" class="file-preview-image" alt="Desert" title="Desert">';
+                p.xxytx = r.xxytx;
+                setting.uploadUrl = setting.uploadUrl + "?fileName="+r.xxytx;
+                setting.initialPreview = [],
+                setting.initialPreview.push(img)
+                setting.initialPreviewAsData = true;	
+                setting.initialPreviewFileType = "image";
+                setting.initialPreviewConfig = [{width: "221px", height: "160px"}]
+            } */
+            $('#fujian').fileinput(setting1).on("fileuploaded", function (event, data, previewId, index) {
+                //p.fj = data.response.obj;
+                $(".file-object").attr("code", data.response.obj)
+            });
+        })
+        var address_app = function () {
+            var pageSize = 5;
+            var initFlag = true;
+            var ractive;
+            function renderView() {
+                ractive = new Ractive({
+                    el: "#formContainer",
+                    template: "#formTemplate",
+                    onrender: function () { },
+                    data: {
+                        formatD: function (d) {
+                            if (d) {
+                                return moment(d).format("YYYY-MM-DD HH:mm:ss");
+                            }
+                        }
+                    },
+                    oncomplete: function () {
+
+                        getDataList(1, null)
+
+                    }
+                })
+                ractive.on({
+                    xg: function (e) {
+                        //store.set("data", e.context);
+                        store.set("createOrUpdate", "update");
+                        store.set("id", e.context.id);
+                        var row = e.context;
+                        $("#name").val(row.formTitle)
+                        $("#introduction").val(row.introduction)
+                        $("#attachmentName_update").val(row.formName)
+                    },
+                    sc: function (e) {
+                        $.ajax({
+                            url: Constants.path + "form/delectForm/" + e.context.id,
+                            type: "get",
+                            success: function (response) {
+                                alert("删除成功")
+                                window.location.href = 'formdown.html';
+                            }
+                        });
+                    },
+                    download: function (e) {
+                        // $.ajax({
+                        //     url: Constants.path + "form/download/" + e.context.id,
+                        //     type: "get",
+                        //     success: function (response) {
+                        //         alert("下载成功")
+                        //         window.location.href = 'formdown.html';
+                        //     }
+                        // });
+                        //var url =  Constants.path + "form/download/" + e.context.id;
+                        var url =  Constants.path + "form/download?id=" + e.context.id;
+                        window.open(url);
+                    }
+                })
+            }
+            $("#create").click(function () {
+                store.set("createOrUpdate", "create");
+            });
+            $("#refresh").click(function () {
+                window.location.href = 'formdown.html';
+            });
+            $("#sure").click(function () {
+                //editor.sync();
+                var param = {};
+                param.formTitle = $("#name").val();
+                param.introduction = $("#introduction").val();
+                param.newsCover = typeof ($(".file-preview-image").attr("code")) == 'undefined' ? "" : $(".file-preview-image").attr("code");
+                param.formName = typeof ($(".file-object").attr("code")) == 'undefined' ? "" : $(".file-object").attr("code");
+                if (store.get('createOrUpdate') == "update") {
+                    param.id = store.get('id');
+                }
+                if (store.get('createOrUpdate') == "create") {
+                    $.ajax({
+                        type: "post",
+                        url: Constants.path + "form/addForm",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (data) {
+                            alert("新增成功！")
+                            window.location.href = 'formdown.html';
+                        }
+                    })
+                }
+                else {
+                    $.ajax({
+                        type: "post",
+                        url: Constants.path + "form/updateForm",
+                        data: JSON.stringify(param),
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (data) {
+                            alert("修改成功")
+                            window.location.href = 'formdown.html';
+                        }
+                    })
+                }
+            })
+            $("#btnSearch").click(function () {
+                initFlag = true;
+                getDataList(1, null)
+            });
+            var getDataList = function (currPage, jg) {
+                var param = { pageSize: pageSize, page: currPage }
+                param.keyWord = $("#keyWord").val();
+                param.startTime = $("#startTime").val();
+                param.endTime = $("#endTime").val();
+                $.ajax({
+                    url: Constants.path + "form/getFormList",
+                    type: "post",
+                    dataType: 'json',
+                    data: JSON.stringify(param),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response) {
+                            $("#Pagination").pagination(
+                                {
+                                    pageCount: Math.ceil(response.total / pageSize),
+                                    totalData: response.total,
+                                    showData: pageSize,
+                                    callback: function (api) {
+                                        getDataList(api.getCurrent(), null)
+                                    }//回调函数
+                                });
+                            initFlag = false;
+                            page = currPage
+                            ractive.set("data", response);
+                            Array.from(document.getElementsByTagName('input')).forEach(function (obj) {
+                                obj.checked = false
+                            })
+                            if (sessionStorage.getItem('pageInfoArr')) {
+                                var pageInfoArr = JSON.parse(sessionStorage.getItem('pageInfoArr'))
+                                pageInfoArr.forEach(function (currentPageInfo) {
+                                    if (currentPageInfo.page == currPage) {
+                                        if (currentPageInfo.checked.length > 0) {
+                                            currentPageInfo.checked.forEach(function (checkBox) {
+                                                if (checkBox) {
+                                                    document.getElementById(checkBox).checked = true;
+                                                }
+                                            })
+                                        }
+                                    }
+
+                                })
+                            }
+                        } else {
+                            //暂无数据
+                        }
+                    }
+                });
+            }
+            return {
+                init: function () {
+                    renderView();
+                }
+            }
+        }();
+        $(document).ready(address_app.init)
+    </script>
+</body>
+
+</html>

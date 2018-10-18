@@ -1,0 +1,72 @@
+package com.jtzh.pojo;
+
+import java.util.List;
+
+public class UnionParam {
+	private String type;
+	private 	String unionId ;
+	private String superUnionId;
+	private List<String> list;
+	private int page;
+	private int pageSize;
+	private String keyword;
+	private String start;
+	private String end;
+	
+	public String getStart() {
+		return start;
+	}
+	public void setStart(String start) {
+		this.start = start;
+	}
+	public String getEnd() {
+		return end;
+	}
+	public void setEnd(String end) {
+		this.end = end;
+	}
+
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public String getUnionId() {
+		return unionId;
+	}
+	public void setUnionId(String unionId) {
+		this.unionId = unionId;
+	}
+	public String getSuperUnionId() {
+		return superUnionId;
+	}
+	public void setSuperUnionId(String superUnionId) {
+		this.superUnionId = superUnionId;
+	}
+	public List<String> getList() {
+		return list;
+	}
+	public void setList(List<String> list) {
+		this.list = list;
+	}
+	
+}

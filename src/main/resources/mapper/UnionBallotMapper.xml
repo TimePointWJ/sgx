@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionBallotMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.pojo.BallotParam">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="source" jdbcType="CHAR" property="source" />
+    <result column="source_id" jdbcType="INTEGER" property="sourceId" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="send_ballot" jdbcType="INTEGER" property="sendBallot" />
+    <result column="reclaim_ballot" jdbcType="INTEGER" property="reclaimBallot" />
+    <result column="valid_ballot" jdbcType="INTEGER" property="validBallot" />
+    <result column="invalid_ballot" jdbcType="INTEGER" property="invalidBallot" />
+    <result column="prison_ballot" jdbcType="VARCHAR" property="prisonBallot" />
+    <result column="vote_count" jdbcType="VARCHAR" property="voteCount" />
+    <result column="year" jdbcType="CHAR" property="year" />
+    <result column="mouth" jdbcType="CHAR" property="mouth" />
+    <result column="day" jdbcType="CHAR" property="day" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+    <collection property="ballotInfo" ofType="com.jtzh.entity.UnionBallotInfo" resultMap="BaseResultMap_"/>
+  </resultMap>
+  
+    <resultMap id="BaseResultMap_" type="com.jtzh.entity.UnionBallotInfo">
+    <id column="infoid" jdbcType="INTEGER" property="id" />
+    <result column="ballot_id" jdbcType="INTEGER" property="ballotId" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="ballot_num" jdbcType="INTEGER" property="ballotNum" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, source, source_id, type, send_ballot, reclaim_ballot, valid_ballot, invalid_ballot, 
+    prison_ballot, vote_count, year, mouth, day, delflag
+  </sql>
+  <select id="selectBallot" resultMap="BaseResultMap">
+    select * 
+    from union_ballot b right join union_ballot_info i on b.id = i.ballot_id
+    where b.source = #{source,jdbcType=INTEGER} and b.source_id = #{sourceId}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_ballot
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jtzh.entity.UnionBallot">
+    insert into union_ballot (id, source, source_id, 
+      type, send_ballot, reclaim_ballot, 
+      valid_ballot, invalid_ballot, prison_ballot, 
+      vote_count, year, mouth, day, 
+      delflag)
+    values (#{id,jdbcType=INTEGER}, #{source,jdbcType=CHAR}, #{sourceId,jdbcType=INTEGER}, 
+      #{type,jdbcType=CHAR}, #{sendBallot,jdbcType=INTEGER}, #{reclaimBallot,jdbcType=INTEGER}, 
+      #{validBallot,jdbcType=INTEGER}, #{invalidBallot,jdbcType=INTEGER}, #{prisonBallot,jdbcType=VARCHAR}, 
+      #{voteCount,jdbcType=VARCHAR}, #{year,jdbcType=CHAR}, #{mouth,jdbcType=CHAR}, #{day,jdbcType=CHAR}, 
+      #{delflag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionBallot">
+    insert into union_ballot
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="source != null">
+        source,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="sendBallot != null">
+        send_ballot,
+      </if>
+      <if test="reclaimBallot != null">
+        reclaim_ballot,
+      </if>
+      <if test="validBallot != null">
+        valid_ballot,
+      </if>
+      <if test="invalidBallot != null">
+        invalid_ballot,
+      </if>
+      <if test="prisonBallot != null">
+        prison_ballot,
+      </if>
+      <if test="voteCount != null">
+        vote_count,
+      </if>
+      <if test="year != null">
+        year,
+      </if>
+      <if test="mouth != null">
+        mouth,
+      </if>
+      <if test="day != null">
+        day,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="sendBallot != null">
+        #{sendBallot,jdbcType=INTEGER},
+      </if>
+      <if test="reclaimBallot != null">
+        #{reclaimBallot,jdbcType=INTEGER},
+      </if>
+      <if test="validBallot != null">
+        #{validBallot,jdbcType=INTEGER},
+      </if>
+      <if test="invalidBallot != null">
+        #{invalidBallot,jdbcType=INTEGER},
+      </if>
+      <if test="prisonBallot != null">
+        #{prisonBallot,jdbcType=VARCHAR},
+      </if>
+      <if test="voteCount != null">
+        #{voteCount,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        #{day,jdbcType=CHAR},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionBallot">
+    update union_ballot
+    <set>
+      <if test="source != null">
+        source = #{source,jdbcType=CHAR},
+      </if>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="sendBallot != null">
+        send_ballot = #{sendBallot,jdbcType=INTEGER},
+      </if>
+      <if test="reclaimBallot != null">
+        reclaim_ballot = #{reclaimBallot,jdbcType=INTEGER},
+      </if>
+      <if test="validBallot != null">
+        valid_ballot = #{validBallot,jdbcType=INTEGER},
+      </if>
+      <if test="invalidBallot != null">
+        invalid_ballot = #{invalidBallot,jdbcType=INTEGER},
+      </if>
+      <if test="prisonBallot != null">
+        prison_ballot = #{prisonBallot,jdbcType=VARCHAR},
+      </if>
+      <if test="voteCount != null">
+        vote_count = #{voteCount,jdbcType=VARCHAR},
+      </if>
+      <if test="year != null">
+        year = #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        mouth = #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        day = #{day,jdbcType=CHAR},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionBallot">
+    update union_ballot
+    set source = #{source,jdbcType=CHAR},
+      source_id = #{sourceId,jdbcType=INTEGER},
+      type = #{type,jdbcType=CHAR},
+      send_ballot = #{sendBallot,jdbcType=INTEGER},
+      reclaim_ballot = #{reclaimBallot,jdbcType=INTEGER},
+      valid_ballot = #{validBallot,jdbcType=INTEGER},
+      invalid_ballot = #{invalidBallot,jdbcType=INTEGER},
+      prison_ballot = #{prisonBallot,jdbcType=VARCHAR},
+      vote_count = #{voteCount,jdbcType=VARCHAR},
+      year = #{year,jdbcType=CHAR},
+      mouth = #{mouth,jdbcType=CHAR},
+      day = #{day,jdbcType=CHAR},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

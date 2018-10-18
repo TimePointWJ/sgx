@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionLawMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionLaw">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="law_title" jdbcType="VARCHAR" property="lawTitle" />
+    <result column="law_content" jdbcType="VARCHAR" property="lawContent" />
+    <result column="read_num" jdbcType="INTEGER" property="readNum" />
+    <result column="law_or_unionFile_type" jdbcType="CHAR" property="lawOrUnionfileType" />
+    <result column="cover" jdbcType="VARCHAR" property="cover" />
+    <result column="synopsis" jdbcType="VARCHAR" property="synopsis" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+    <result column="fj" jdbcType="VARCHAR" property="fj" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, law_title, law_content, read_num, law_or_unionFile_type, cover, synopsis, type, 
+    create_name, create_time, delflag, fj
+  </sql>
+  
+  <select id="selectLawList" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from union_law 
+    where delflag != 'D' and type = #{page.param.type}
+  	<if test="page.param.LawOrFileType != null and page.param.LawOrFileType != ''">
+    and law_or_unionFile_type = #{page.param.LawOrFileType}
+     </if>
+    <if test="page.param.createName != null and page.param.createName != ''" >
+    and create_name like concat('%', #{page.param.createName}, '%')
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+    <if test="page.param.titleName != null and page.param.titleName != ''" >
+    and law_title like concat('%', #{page.param.titleName}, '%')
+    </if>
+    order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+  <select id="selectTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+  	select count(1)
+    from union_law 
+    where delflag != 'D' and type = #{page.param.type}
+  	<if test="page.param.LawOrFileType != null and page.param.LawOrFileType != ''">
+    and law_or_unionFile_type = #{page.param.LawOrFileType}
+     </if>
+    <if test="page.param.createName != null and page.param.createName != ''" >
+    and create_name like concat('%', #{page.param.createName}, '%')
+    </if>
+    <if test="page.param.startTime != null and page.param.startTime != ''">
+    and create_time &gt; #{page.param.startTime}
+    </if>
+    <if test="page.param.endTime != null and page.param.endTime != ''">
+    and create_time &lt; #{page.param.endTime}
+    </if>
+    <if test="page.param.titleName != null and page.param.titleName != ''" >
+    and law_title like concat('%', #{page.param.titleName}, '%')
+    </if>
+    
+  </select>
+  
+  <select id="selectLaw"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_law
+    where id = #{id} and type = #{type} 
+  </select>
+  
+  <insert id="insertLaw" parameterType="com.jtzh.entity.UnionLaw">
+	  <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+	          SELECT LAST_INSERT_ID()
+	  </selectKey>
+    insert into union_law (law_title, law_content, 
+      read_num, law_or_unionFile_type, cover, 
+      synopsis, type, create_name, 
+      create_time, delflag, fj)
+    values (#{lawTitle,jdbcType=VARCHAR}, #{lawContent,jdbcType=VARCHAR}, 
+      #{readNum,jdbcType=INTEGER}, #{lawOrUnionfileType,jdbcType=CHAR}, #{cover,jdbcType=VARCHAR}, 
+      #{synopsis,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR}, #{fj,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateLaw">
+    update union_law
+    set 
+      delflag = 'D'
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateLaws" parameterType="com.jtzh.entity.UnionLaw">
+    update union_law
+    set law_title = #{lawTitle,jdbcType=VARCHAR},
+      law_content = #{lawContent,jdbcType=VARCHAR},
+      law_or_unionFile_type = #{lawOrUnionfileType,jdbcType=CHAR},
+      cover = #{cover,jdbcType=VARCHAR},
+      synopsis = #{synopsis,jdbcType=VARCHAR},
+      fj = #{fj,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

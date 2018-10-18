@@ -1,0 +1,60 @@
+package com.jtzh.service;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.jtzh.common.page.Page;
+import com.jtzh.entity.UnionForm;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.mapper.UnionFormMapper;
+import com.jtzh.pojo.NewsParam;
+
+@Service("formService")
+public class FormServiceImpl implements FormService {
+
+	@Resource
+	private UnionFormMapper unionFormMapper;
+	@Override
+	public Object getFormList(NewsParam newsParam) {
+		Page page = new Page();
+		page.setCurrPage(newsParam.getPage());
+		page.setPageSize(newsParam.getPageSize());
+		page.setParam(newsParam);
+		System.out.println(newsParam.getKeyWord());
+		int total = unionFormMapper.selectTotal(page);
+		if(total>0) {
+			List<UnionForm> list = unionFormMapper.selectFormList(page);
+			page.setTotal(total);
+			page.setData(list);
+		}
+		return page;
+	}
+	@Override
+	public Object delectForm(String id) {
+		return unionFormMapper.updateForm(id);
+	}
+	@Override
+	public Object insertForm(UnionUser user, UnionForm unionForm) {
+		unionForm.setCreateName(user.getUserName());
+		unionForm.setCreateTime(new Date());
+		unionForm.setDelflag("A");
+		unionForm.setDownloadMun(0);
+		return unionFormMapper.insertForm(unionForm);
+	}
+	@Override
+	public Object updateForm(UnionForm unionForm) {
+		System.out.println(unionForm.getFormTitle());
+		return unionFormMapper.udateFormInfo(unionForm);
+	}
+	@Override
+	public Object updateNum(String id) {
+		
+		return unionFormMapper.updateNum(id);
+	}
+
+	
+}

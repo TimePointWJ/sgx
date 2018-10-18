@@ -1,0 +1,91 @@
+package com.jtzh.controller;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.jtzh.common.base.BaseController;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.pojo.BuildParam;
+import com.jtzh.pojo.UnionParam;
+import com.jtzh.service.UnionService;
+
+@RestController
+@RequestMapping("union")
+public class UnionController extends BaseController {
+	 protected static final org.slf4j.Logger logger = LoggerFactory.getLogger(UnionController.class);
+	@Resource
+	private UnionService unionService;
+  
+	/**
+	 * 获取工会申请列表
+	 * 
+	 * @param request
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(value= "/getUionList", method = RequestMethod.POST)
+    public Object getUnion(HttpServletRequest request,@RequestBody UnionParam param){
+		UnionUser user = getUserInfo(request);
+		return unionService.getUnion(user,param);
+    }
+	
+	/**
+	 * 获取详细信息
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value="getUnionInfo/{id}",method=RequestMethod.GET)
+	public Object getUnionInfo(HttpServletRequest request,@PathVariable("id")String id) {
+		return unionService.getUnionInfo(id);
+		
+	}
+	
+	/**
+	 * 新增申请
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="saveUnion",method=RequestMethod.POST)
+	public Object saveUnion(HttpServletRequest request,@RequestBody BuildParam param) {
+		
+		return unionService.insertUnion(getUserInfo(request), param);
+		
+	}
+	
+	/**
+	 * 修改申请
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="modifyUnion",method=RequestMethod.POST)
+	public Object modifyUnion(HttpServletRequest request,@RequestBody BuildParam param) {
+		
+		return unionService.insertUnion(getUserInfo(request), param);
+		
+	}
+	
+	/**
+	 * 删除申请
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="removeUnion/{id}",method=RequestMethod.GET)
+	public Object removeUnion(HttpServletRequest request,@PathVariable String id) {
+		
+		return unionService.removeUnion(id);
+		
+	}
+
+
+
+}

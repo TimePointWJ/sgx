@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>人员管理</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/storejson2.min.js"></script>
+    <script src="../js/constants.js"></script>
+    <style>
+        #table1 {
+            border: none;
+        }
+
+        #part2 div,
+        #part2 table {
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a {
+            width: 50px;
+        }
+
+        /*复选框样式调整*/
+
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        .no-records-found:hover {
+            color: red;
+        }
+
+        #action a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left: 5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+
+        .squaredFour input[type=checkbox]:checked+label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background", "whitesmoke");
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck() {
+            if (isCheckAll) {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = false;
+                });
+                isCheckAll = false;
+            } else {
+                $("input[type='checkbox']").each(function () {
+                    this.checked = true;
+                });
+                isCheckAll = true;
+            }
+        }
+
+        //分页代码
+        var pageSize = 5;
+        var page = 1;
+        var initFlag = true;
+        var getDataList = function (currPage, jg) {
+            var param = { pageSize: pageSize, page: currPage }
+            $.ajax({
+                url: Constants.path + "phoneBook/getBook",
+                type: "post",
+                dataType: 'json',
+                data: JSON.stringify(param),
+                contentType: "application/json",
+                success: function (response) {
+                    if (response) {
+                        if (response.data != null && response.data != "") {
+                            if (initFlag) {
+                                $("#Pagination").pagination(
+                                    {
+                                        pageCount: Math.ceil(response.total / pageSize),
+                                        totalData: response.total,
+                                        showData: pageSize,
+                                        callback: function (api) {
+                                            getDataList(api.getCurrent(), null)
+                                        }//回调函数
+                                    });
+                                initFlag = false;
+                            }
+                            ractive.set("data", response.data);
+                        } else {
+                            //暂无数据
+                        }
+                    } else {
+                        //暂无数据
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" style="color: #000;">
+                            <b>人员管理</b>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="part2" style="margin:0 auto ">
+            <div id="form" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                    <div id="action" style="margin-top: -25px;">
+                        <a href="#" data-toggle="modal" data-target="#myModal">
+                            <div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <!-- <a href="#">
+                            <div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#">
+                            <div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#"> -->
+                        <a href="#" id="refresh">
+                            <div class="icon-refresh" style="color: red;"></div> 刷新</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="#" id="export">
+                            <div class="icon-upload-alt" style="color: red;"></div> 导出</a>
+                    </div>
+                    <!--弹出新增模态框-->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" style="width: 800px;">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background: indianred; color: white;">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                    <h4 class="modal-title">新增人员</h4>
+                                </div>
+                                <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户：
+                                        <input id="name" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入用户名称">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;账号：
+                                        <input id="account" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入账号">
+                                    </div>
+                                    <!-- <div>所属单位： -->
+                                    <!-- <input id="firm" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入单位名称"> -->
+                                    <div>所属单位：
+                                        <select id="firm" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;">
+                                            <option value="0001">-工会-</option>
+                                            <option selected="selected" value="000101">&nbsp;&nbsp;|-苏州高新区工会-</option>
+                                            <!-- <option value="0010101">    |-镇(街道、开发区)工会</option>
+                                                    <option value="001010101">      |-浒墅关经开区</option>
+                                                    <option value="001010102">      |-科技城</option>
+                                                    <option value="001010103">      |-综保区</option>
+                                                    <option value="001010104">      |-度假区</option>
+                                                    <option value="001010105">      |-浒墅关镇</option>
+                                                    <option value="001010106">      |-通安镇</option>
+                                                    <option value="001010107">      |-狮山街道</option>
+                                                    <option value="001010108">      |-枫桥街道</option>
+                                                    <option value="0010102">    |-直属企业工会</option>
+                                                    <option value="001010201">      |-苏州高新区经济发展集团总公司</option>
+                                                    <option value="001010202">      |-苏州高新区技术产业股份公司</option>
+                                                    <option value="001010203">      |-苏州高新区产业投资集团有限公司</option>
+                                                    <option value="001010204">      |-苏州高新区有轨电车有限公司</option>
+                                                    <option value="001010205">      |-苏州高新区文体集团有限公司</option>
+                                                    <option value="001010206">      |-中科院苏州医工所</option>
+                                                    <option value="0010103">    |-直属工联会</option>
+                                                    <option value="001010301">      |-教育工联会</option> -->
+                                            <option value="镇(街道、开发区)工会">&nbsp;&nbsp;&nbsp;&nbsp;|-镇(街道、开发区)工会</option>
+                                            <option value="浒墅关经开区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-浒墅关经开区</option>
+                                            <option value="科技城">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-科技城</option>
+                                            <option value="综保区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-综保区</option>
+                                            <option value="度假区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-度假区</option>
+                                            <option value="浒墅关镇">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-浒墅关镇</option>
+                                            <option value="通安镇">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-通安镇</option>
+                                            <option value="狮山街道">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-狮山街道</option>
+                                            <option value="枫桥街道">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-枫桥街道</option>
+                                            <option value="直属企业工会">&nbsp;&nbsp;&nbsp;&nbsp;|-直属企业工会</option>
+                                            <option value="苏州高新区经济发展集团总公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区经济发展集团总公司</option>
+                                            <option value="苏州高新区技术产业股份公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区技术产业股份公司</option>
+                                            <option value="苏州高新区产业投资集团有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区产业投资集团有限公司</option>
+                                            <option value="苏州高新区有轨电车有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区有轨电车有限公司</option>
+                                            <option value="苏州高新区文体集团有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区文体集团有限公司</option>
+                                            <option value="中科院苏州医工所">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-中科院苏州医工所</option>
+                                            <option value="直属工联会">&nbsp;&nbsp;&nbsp;&nbsp;|-直属工联会</option>
+                                            <option value="教育工联会">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-教育工联会</option>
+                                        </select>
+                                    </div>
+                                    <!-- </div> -->
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;角色：
+                                        <!-- <input id="position" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入职位"> -->
+                                        <select id="position" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;">
+                                            <option value="1">-工会成员-</option>
+                                            <option value="2">-办公司-</option>
+                                            <option value="3">-分管领导-</option>
+                                            <option value="4">-主要领导-</option>
+                                        </select>
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：
+                                        <input id="role" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入角色">
+                                    </div>
+                                    <div>联系方式：
+                                        <input id="telephone" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入联系方式">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注：
+                                        <textarea id="remark" style="vertical-align: top;;border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 100px;"
+                                            placeholder="请输入备注"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="sure" type="button" class="btn btn-danger">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    <!--弹出修改模态框-->
+                    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" style="width: 800px;">
+                            <div class="modal-content">
+                                <div class="modal-header" style="background: indianred; color: white;">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                    <h4 class="modal-title">修改人员</h4>
+                                </div>
+                                <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户：
+                                        <input id="name1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入用户名称">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;账号：
+                                        <input id="account1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入账号">
+                                    </div>
+                                    <!-- <div>所属单位： -->
+                                    <!-- <input id="firm1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入单位名称"> -->
+                                    <div>所属单位：
+                                        <select id="firm1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;">
+                                            <option value="0001">-工会-</option>
+                                            <option selected="selected" value="000101">&nbsp;&nbsp;|-苏州高新区工会-</option>
+                                            <option value="镇(街道、开发区)工会">&nbsp;&nbsp;&nbsp;&nbsp;|-镇(街道、开发区)工会</option>
+                                            <option value="浒墅关经开区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-浒墅关经开区</option>
+                                            <option value="科技城">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-科技城</option>
+                                            <option value="综保区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-综保区</option>
+                                            <option value="度假区">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-度假区</option>
+                                            <option value="浒墅关镇">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-浒墅关镇</option>
+                                            <option value="通安镇">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-通安镇</option>
+                                            <option value="狮山街道">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-狮山街道</option>
+                                            <option value="枫桥街道">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-枫桥街道</option>
+                                            <option value="直属企业工会">&nbsp;&nbsp;&nbsp;&nbsp;|-直属企业工会</option>
+                                            <option value="苏州高新区经济发展集团总公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区经济发展集团总公司</option>
+                                            <option value="苏州高新区技术产业股份公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区技术产业股份公司</option>
+                                            <option value="苏州高新区产业投资集团有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区产业投资集团有限公司</option>
+                                            <option value="苏州高新区有轨电车有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区有轨电车有限公司</option>
+                                            <option value="苏州高新区文体集团有限公司">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-苏州高新区文体集团有限公司</option>
+                                            <option value="中科院苏州医工所">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-中科院苏州医工所</option>
+                                            <option value="直属工联会">&nbsp;&nbsp;&nbsp;&nbsp;|-直属工联会</option>
+                                            <option value="教育工联会">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|-教育工联会</option>
+                                        </select>
+                                    </div>
+                                    <!-- </div> -->
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;角色：
+                                        <!-- <input id="position" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入职位"> -->
+                                        <select id="position1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;">
+                                            <option value="1">-工会成员-</option>
+                                            <option value="2">-办公司-</option>
+                                            <option value="3">-分管领导-</option>
+                                            <option value="4">-主要领导-</option>
+                                        </select>
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：
+                                        <input id="role1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入角色">
+                                    </div>
+                                    <div>联系方式：
+                                        <input id="telephone1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                            placeholder="请输入联系方式">
+                                    </div>
+                                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备注：
+                                        <textarea id="remark1" style="vertical-align: top;;border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 100px;"
+                                            placeholder="请输入备注"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="sure1" type="button" class="btn btn-danger">确定</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+
+                    <div class="fixed-table-container" style="padding-bottom: 0px;">
+                        <div class="fixed-table-body">
+                            <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                            <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id"
+                                data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;">
+                                <!--class="table-hover"-->
+                                <thead style="background: whitesmoke;">
+                                    <tr>
+                                        <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                            <div class="th-inner ">
+                                                <!--<input name="btSelectAll" type="checkbox">-->
+                                                <section title=".squaredFour">
+                                                    <!-- .squaredFour -->
+                                                    <div class="squaredFour">
+                                                        <input type="checkbox" onclick="swapCheck()" value="None" id="1" name="check">
+                                                        <label for="1"></label>
+                                                    </div>
+                                                    <!-- end .squaredFour -->
+                                                </section>
+                                            </div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="name" tabindex="0">
+                                            <div class="th-inner">序号</div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="sex" tabindex="0">
+                                            <div class="th-inner">用户名称</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">上级工会</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 190px;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">所属单位</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">职务</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">角色</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="performance" tabindex="0">
+                                            <div class="th-inner">联系方式</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">备注</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                        <th style="text-align: center;width: 200px;" data-field="birth" tabindex="0">
+                                            <div class="th-inner">操作</div>
+                                            <div class="fht-cell"></div>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody style="" id="lawContainer">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="m-style" style="display: block;float: right">
+                            <nav aria-label="Page navigation">
+                                <div id="Pagination" class="pagination">
+
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ractive" id="lawTemplate">
+        {{#if data}}
+        {{#each data.data : i}}
+        <tr class="no-records-found">
+            <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                <div class="th-inner ">
+                    <!--<input name="btSelectAll" type="checkbox">-->
+                    <section title=".squaredFour">
+                        <!-- .squaredFour -->
+                        <div class="squaredFour">
+                            <input type="checkbox" value="None" id="{{(data.currPage-1)*5+i+2}}" name="squaredFour" onclick="count(this)" />
+                            <label for="{{(data.currPage-1)*5+i+2}}"></label>
+                        </div>
+                        <!-- end .squaredFour -->
+                    </section>
+                </div>
+                <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                <div class="th-inner sortable">{{(data.currPage-1)*5+i+1}}</div>
+                <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                <div class="th-inner sortable ">{{data.data[i].userName}}</div>
+                <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                <div class="th-inner sortable ">{{data.data[i].higherUnion}}</div>
+                <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                <div class="th-inner sortable ">{{data.data[i].union}}</div>
+                <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                    <div class="th-inner sortable ">{{data.data[i].job}}</div>
+                    <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                {{#if data.data[i].access == '1'}}
+                    <div class="th-inner sortable ">工会成员</div>
+                {{/if}}
+                {{#if data.data[i].access == '2'}}
+                    <div class="th-inner sortable ">办公室</div>
+                {{/if}}
+                {{#if data.data[i].access == '3'}}
+                    <div class="th-inner sortable ">分管领导</div>
+                {{/if}}
+                {{#if data.data[i].access == '4'}}
+                    <div class="th-inner sortable ">主要领导</div>
+                {{/if}}
+                    <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                    <div class="th-inner sortable ">{{data.data[i].loginId}}</div>
+                    <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                    <div class="th-inner sortable ">{{data.data[i].remarks}}</div>
+                    <div class="fht-cell"></div>
+            </td>
+            <td style="text-align: center;" data-field="name" tabindex="0">
+                    <a href='#' on-click="modify" id="modify" data-toggle="modal" data-target="#myModal1"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" on-click="sc"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             </td>
+        </tr>
+        {{/each}}
+        {{/if}}
+</script>
+    <script>
+        var address_app = function () {
+
+            var pageSize = 5;
+
+            var initFlag = true;
+            var ractive;
+            function renderView() {
+                ractive = new Ractive({
+                    el: "#lawContainer",
+                    template: "#lawTemplate",
+                    onrender: function () { },
+                    oncomplete: function () {
+                        getDataList(1, null)
+                    }
+                })
+                ractive.on({
+                    modify: function (obj) {
+                        var row = obj.context;
+                        $("#name1").val(row.userName);
+                        $("#account1").val(row.loginId);
+                        $("#firm1").val(row.union);
+                        $("#position1").val(row.access);
+                        $("#role1").val(row.job);
+                        //$("#position1").val(row.job);
+                        //$("#role1").val(row.identity);
+                        $("#telephone1").val(row.loginId);
+                        $("#remark1").val(row.remarks);
+                        return;
+                        //$("#superName1").val(row.superiorUnionName);
+                        var id = row.id;
+                        store.set("id", id);
+                    },
+                    sc: function (e) {
+                        $.ajax({
+                            url: Constants.path + "user/deleteUser/" + e.context.id,
+                            type: "get",
+                            success: function (response) {
+                                alert("删除成功")
+                                window.location.href = 'PersonManage.html';
+                            }
+                        });
+                    }
+                })
+            }
+            $("#btnSearch").click(function () {
+                initFlag = true;
+                getDataList(1, null)
+            });
+            $("#create").click(function () {
+                store.set("createOrUpdate", "create");
+            });
+            $("#refresh").click(function () {
+                window.location.href = 'PersonManage.html';
+            });
+            // $("#export").click(function () { 
+            //     //var param = { pageSize: "5", page: "1" } 
+            //     $.ajax({
+            //         type: "post",
+            //         url: Constants.path + "user/export",
+            //         success: function (data) {
+            //             alert("导出成功！")
+            //         }
+            //     })
+            //     window.location.href = 'PersonManage.html';
+            // });
+            $("#export").click(function () { 
+                var url = Constants.path + "user/export"; 
+                window.open(url); 
+            });
+            $("#sure").click(function () {
+                var param = {};
+                param.userName = $("#name").val();
+                param.loginId = $("#account").val()
+                param.union = $("#firm").val()
+                //param.job = $("#position").val()
+                param.job = $("#role").val()
+                param.remarks = $("#remark").val()
+                param.access = $("#position").val()
+                //console.log($("#position").val())
+                //return;
+                $.ajax({
+                    type: "post",
+                    url: Constants.path + "user/addUser",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#name").val("");
+                        $("#superName").val("");
+                        alert("新增成功！")
+                        $('#myModal').modal('hide');
+                        getDataList(1, null)
+                    }
+                })
+            })
+            $("#sure1").click(function () {
+                var param = {};
+                param.userName = $("#name1").val();
+                param.loginId = $("#account1").val()
+                param.union = $("#firm1").val()
+                //param.job = $("#position1").val()
+                param.job = $("#role1").val()
+                param.remarks = $("#remark1").val()
+                param.access = $("#position1").val()
+                $.ajax({
+                    type: "post",
+                    url: Constants.path + "user/updateUser",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (data) {
+                        $("#name").val("");
+                        $("#superName").val("");
+                        alert("修改成功！")
+                        $('#myModal1').modal('hide');
+                        getDataList(1, null)
+                    }
+                })
+            })
+            var getDataList = function (currPage, jg) {
+                var param = { pageSize: pageSize, page: currPage }
+                $.ajax({
+                    url: Constants.path + "user/getUserList",
+                    type: "post",
+                    dataType: 'json',
+                    data: JSON.stringify(param),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response) {
+                            $("#Pagination").pagination(
+                                {
+                                    pageCount: Math.ceil(response.total / pageSize),
+                                    totalData: response.total,
+                                    showData: pageSize,
+                                    callback: function (api) {
+                                        getDataList(api.getCurrent(), null)
+                                    }//回调函数
+                                });
+                            initFlag = false;
+                            page = currPage
+                            ractive.set("data", response);
+                            Array.from(document.getElementsByTagName('input')).forEach(function (obj) {
+                                obj.checked = false
+                            })
+                            if (sessionStorage.getItem('pageInfoArr')) {
+                                var pageInfoArr = JSON.parse(sessionStorage.getItem('pageInfoArr'))
+                                pageInfoArr.forEach(function (currentPageInfo) {
+                                    if (currentPageInfo.page == currPage) {
+                                        if (currentPageInfo.checked.length > 0) {
+                                            currentPageInfo.checked.forEach(function (checkBox) {
+                                                if (checkBox) {
+                                                    document.getElementById(checkBox).checked = true;
+                                                }
+                                            })
+                                        }
+                                    }
+
+                                })
+                            }
+                        } else {
+                            //暂无数据
+                        }
+                    }
+                });
+            }
+            return {
+                init: function () {
+                    renderView();
+                }
+            }
+        }();
+        $(document).ready(address_app.init)
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jtzh.mapper.UnionElectionMapper">
+	<resultMap id="BaseResultMap" type="com.jtzh.entity.UnionElection">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="CHAR" />
+		<result column="delflag" property="delflag" jdbcType="CHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="election_title" property="electionTitle"
+			jdbcType="VARCHAR" />
+		<result column="attachment" property="attachment" jdbcType="VARCHAR" />
+		<result column="election_state" property="electionState"
+			jdbcType="CHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, type, delflag, create_time, election_title, attachment,
+		election_state
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from union_election
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		union_election
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.jtzh.entity.UnionElection">
+		<selectKey resultType="java.lang.String" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into union_election
+		(id, type, delflag,
+		create_time,
+		election_title, attachment,
+		election_state)
+		values
+		(#{id,jdbcType=INTEGER}, #{type,jdbcType=CHAR},
+		#{delflag,jdbcType=CHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{electionTitle,jdbcType=VARCHAR},
+		#{attachment,jdbcType=VARCHAR},
+		#{electionState,jdbcType=CHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.jtzh.entity.UnionElection">
+		insert into union_election
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="delflag != null">
+				delflag,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=CHAR},
+			</if>
+			<if test="delflag != null">
+				#{delflag,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionElection">
+		update union_election
+		<set>
+			<if test="type != null">
+				type = #{type,jdbcType=CHAR},
+			</if>
+			<if test="delflag != null">
+				delflag = #{delflag,jdbcType=CHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionElection">
+		update
+		union_election
+		set type = #{type,jdbcType=CHAR},
+		delflag =
+		#{delflag,jdbcType=CHAR},
+		create_time =
+		#{createTime,jdbcType=TIMESTAMP},
+		election_title =
+		#{electionTitle,jdbcType=VARCHAR},
+		attachment =
+		#{attachment,jdbcType=VARCHAR},
+		election_state =
+		#{electionState,jdbcType=CHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectElectionList" parameterType="com.jtzh.common.page.Page"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_election
+		where delflag != 'D'
+		<if test="page.param.type != null and page.param.type != ''">
+			and type = #{page.param.type}
+		</if>
+		<if test="page.param.title != null and page.param.title != ''">
+			and election_title like concat('%', #{page.param.title},
+			'%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+		order by create_time asc
+		limit #{page.start},#{page.pageSize}
+	</select>
+
+	<select id="selectTotal" parameterType="com.jtzh.common.page.Page"
+		resultType="java.lang.Integer">
+		select count(1)
+		from union_election
+		where delflag != 'D'
+		<if test="page.param.type != null and page.param.type != ''">
+			and type = #{page.param.type}
+		</if>
+		<if test="page.param.title != null and page.param.title != ''">
+			and election_title like concat('%', #{page.param.title},
+			'%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+	</select>
+	<update id="deleteElection">
+		update union_election
+		set
+		delflag = 'D'
+		where id = #{id}
+	</update>
+</mapper>

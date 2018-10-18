@@ -1,0 +1,17 @@
+package com.jtzh.mapper;
+
+import com.jtzh.entity.UnionUnion;
+
+public interface UnionUnionMapper {
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(UnionUnion record);
+
+    int insertSelective(UnionUnion record);
+
+    UnionUnion selectByPrimaryKey(Integer id);
+
+    int updateByPrimaryKeySelective(UnionUnion record);
+
+    int updateByPrimaryKey(UnionUnion record);
+}

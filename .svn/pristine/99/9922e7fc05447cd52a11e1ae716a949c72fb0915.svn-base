@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionNoticeMapper">
+	<resultMap id="BaseResultMap" type="com.jtzh.entity.UnionNotice">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="notice_title" jdbcType="VARCHAR" property="noticeTitle" />
+		<result column="notice_content" jdbcType="VARCHAR" property="noticeContent" />
+		<result column="notice_cover" jdbcType="VARCHAR" property="noticeCover" />
+		<result column="notice_synopsis" jdbcType="VARCHAR" property="noticeSynopsis" />
+		<result column="is_important" jdbcType="CHAR" property="isImportant" />
+		<result column="notice_type" jdbcType="CHAR" property="noticeType" />
+		<result column="create_name" jdbcType="VARCHAR" property="createName" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="delflag" jdbcType="CHAR" property="delflag" />
+		<result column="fj" jdbcType="VARCHAR" property="fj" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, notice_title, notice_content,notice_cover,notice_synopsis,
+		is_important, notice_type, create_name, create_time,
+		delflag, fj
+	</sql>
+	<select id="selectNoticeTotal" parameterType="com.jtzh.common.page.Page"
+		resultType="java.lang.Integer">
+		select count(1)
+		from union_notice
+		where delflag <![CDATA[<>]]>
+		'D'
+		<if test="page.param.noticeType != null">
+			and notice_type = #{page.param.noticeType}
+		</if>
+		<if test="page.param.createName != null and page.param.createName != ''">
+			and create_name like concat('%', #{page.param.createName}, '%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+		<if test="page.param.titleName != null and page.param.titleName != ''">
+			and notice_title like concat('%', #{page.param.titleName}, '%')
+		</if>
+	</select>
+
+	<select id="selectNoticeList" parameterType="com.jtzh.common.page.Page"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_notice
+		where delflag <![CDATA[<>]]>
+		'D'
+		<if test="page.param.noticeType != null and page.param.noticeType != ''">
+			and notice_type = #{page.param.noticeType}
+		</if>
+		<if test="page.param.createName != null and page.param.createName != ''">
+			and create_name like concat('%', #{page.param.createName}, '%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+		<if test="page.param.titleName != null and page.param.titleName != ''">
+			and notice_title like concat('%', #{page.param.titleName}, '%')
+		</if>
+		order by create_time asc
+		limit #{page.start},#{page.pageSize}
+	</select>
+
+	<select id="selectNotice" resultMap="BaseResultMap">
+		select * from union_notice where id = #{id} and delflag != 'D'
+	</select>
+
+
+
+
+
+
+	<insert id="insert" parameterType="com.jtzh.entity.UnionNotice">
+		<selectKey resultType="java.lang.String" order="AFTER"
+			keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into union_notice (id, notice_title, notice_content,
+		is_important,notice_cover, notice_type, create_name,
+		create_time, delflag, notice_synopsis, fj)
+		values (#{id,jdbcType=INTEGER}, #{noticeTitle,jdbcType=VARCHAR},
+		#{noticeContent,jdbcType=VARCHAR},
+		#{isImportant,jdbcType=CHAR}, #{noticeCover,jdbcType=VARCHAR}, #{noticeType,jdbcType=CHAR},
+		#{createName,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR}, 
+		#{noticeSynopsis,jdbcType=VARCHAR},#{fj,jdbcType=VARCHAR})
+	</insert>
+
+
+	<update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionNotice">
+		update union_notice
+		set notice_title = #{noticeTitle,jdbcType=VARCHAR},
+		notice_content = #{noticeContent,jdbcType=VARCHAR},
+		notice_cover = #{noticeCover,jdbcType=VARCHAR},
+		is_important = #{isImportant,jdbcType=CHAR},
+		notice_type = #{noticeType,jdbcType=CHAR},
+		notice_synopsis = #{noticeSynopsis,jdbcType=VARCHAR},
+		fj = #{fj,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="deleteByPrimaryKey">
+		update union_notice
+		set
+		delflag = 'D'
+		where id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>工会管理</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+    <script>
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" style="color: #000;">
+                            <b>工会管理</b>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="dynamicTree">
+        </div>
+    </div>
+
+    <script>
+        function Tree(option) {
+            var _fontSize = 10;
+            var defaultOpt = {
+                width: 900,
+                height: 900,
+                offsetTreeH: 200,//影响树形横向的区域
+                nodeHeight: 20,//节点rect高度
+                nodeWidth: {//传参为null就按字数设置宽度
+                    _0: 160,
+                    _1: 160,
+                    _2: 130,
+                    _3: 110,
+                    _4: 160
+                },//默认节点宽度
+                selector: null,//挂载元素
+                fontNum: 1.2,//设置字体大小因子
+                fontColors: {//字体颜色
+                    normal: '#fff',
+                    warning: '#e3e3e1',
+                    errors: '#f00'
+                },
+                bgColors: {
+                    normal: '#E84B2C',
+                    warning: '#e3e3e1',
+                    errors: '#f00'
+                },
+                dataUrl: '' //必填
+            };
+
+            option = $.extend(true, defaultOpt, option);
+
+            this.width = option.width;
+            this.height = option.height;
+            this.nodeHeight = option.nodeHeight;
+            this.nodeWidth = option.nodeWidth;
+            this.offsetTreeH = option.offsetTreeH;
+            this.selector = option.selector == null ? "body" : option.selector;
+            this.fontNum = option.fontNum;
+            this.fontColors = option.fontColors;
+            this.bgColors = option.bgColors;
+            this.dataUrl = option.dataUrl;
+            this._getFontSize = function () {
+                return _fontSize;
+            }
+
+        }
+
+        Tree.prototype.init = function () {
+            var that = this;
+            var tree = d3.layout.tree()
+                .size([that.width, that.height - that.offsetTreeH])
+                .separation(function (a, b) {//间隔函数
+                    return (a.parent == b.parent ? 1 : 2) / a.depth;
+                });
+
+            var svg = d3.select(that.selector).append("svg")
+                .attr("width", that.width)
+                .attr("height", that.height)
+                .append("g")
+                .attr("transform", "translate(20,0)");
+
+
+            if (Object.prototype.toString.call(that.dataUrl).toLowerCase() == '[object string]') {
+                d3.json(that.dataUrl, function (error, root) {
+                    if (error) throw error;
+                    render(root);
+                });
+            } else {
+                render(that.dataUrl);
+            }
+
+            function render(root) {
+                var nodes = tree.nodes(root);
+                var links = tree.links(nodes);
+                var link = svg.selectAll(".link")
+                    .data(links)
+                    .enter()
+                    .append("path")
+                    .attr("class", "link")
+                    .attr("d", function (d) {
+                        var lineOffsetWidth;
+
+                        if (that.nodeWidth == null) {//nodeWidth传参为null则按照字数来自动设置宽度
+                            lineOffsetWidth = (d.source.name.length + d.source.number.length + 2)
+                                * that._getFontSize() * that.fontNum;
+                        } else {
+                            lineOffsetWidth = that.nodeWidth['_' + d.source.depth];
+                        }
+
+                        lineOffsetWidth = lineOffsetWidth + 10;
+
+                        return "M" + d.source.y + " " + d.source.x +
+                            "L" + (d.source.y + lineOffsetWidth) + " " + d.source.x +
+                            " L" + (d.source.y + lineOffsetWidth) + " " + d.target.x + " L" +
+                            d.target.y + " " + d.target.x;
+                    })
+                    .attr("style", function () {
+                        return "stroke:#F7881F;fill: none;stroke-width: 1.5px;"
+                    });
+
+                var node = svg.selectAll(".node")
+                    .data(nodes)
+                    .enter()
+                    .append("g")
+                    .attr("class", "node")
+                    .attr("transform", function (d) {
+                        return "translate(" + d.y + "," + (d.x - that.nodeHeight / 2) + ")";
+                    })
+                    .attr("style", function (d) {
+                        return "font: " + that._getFontSize() * that.fontNum + "px sans-serif;"
+                    });
+
+                node.append("rect")
+                    .attr("width", function (d) {
+                        return that.nodeWidth == null ?
+                            (d.name.length + d.number.length + 2) * that._getFontSize() * that.fontNum :
+                            that.nodeWidth['_' + d.depth];
+                    })
+                    .attr("height", that.nodeHeight)
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("style", function (d) {
+                        if (d.type === "1") {
+                            return "fill:" + that.bgColors.normal;
+                        } else if (d.type === "2") {
+                            return "fill:" + that.bgColors.warning;
+                        } else {
+                            return "fill:" + that.bgColors.errors;
+                        }
+                    });
+
+                node.append("text")
+                    .attr("dx", function (d) {
+                        return that._getFontSize() * that.fontNum;
+                    })
+                    .attr("dy", (that._getFontSize() * that.fontNum + that.nodeHeight) / 2 - 2)
+                    .style("text-anchor", function (d) {
+                        return "start";
+                    })
+                    .style("fill", "#fff")
+                    .text(function (d) { return d.name; });
+
+                node.append("text")
+                    .attr("dx", function (d) {
+                        return that.nodeWidth == null ?
+                            (d.name.length + 2) * that._getFontSize() * that.fontNum :
+                            (that.nodeWidth['_' + d.depth] - 3 * that._getFontSize() * that.fontNum);
+                    })
+                    .attr("dy", (that._getFontSize() * that.fontNum + that.nodeHeight) / 2 - 2)
+                    .style("text-anchor", function (d) {
+                        return "start";
+                    })
+                    .style("fill", "#fff")
+                    .text(function (d) { return d.number; });
+
+            }
+        };
+
+        var jsonObject = {
+            "name": "工会•苏高新工会",
+            "type": "1",
+            "children":
+                [
+                    {
+                        "name": "苏高新工会一",
+                        "type": "1",
+                        "children":
+                            [
+                                {
+                                    "name": "o",
+                                    "type": "1",
+                                    "children":
+                                        [
+                                            {
+                                                "name": "n",
+                                                "type": "1",
+                                                "children":
+                                                    [
+                                                        {
+                                                            "name": "m",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "l",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "k",
+                                                            "type": "1"
+                                                        }
+                                                    ]
+                                            },
+                                            {
+                                                "name": "j",
+                                                "type": "1",
+                                                "children":
+                                                    [
+                                                        {
+                                                            "name": "i",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "h",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "g",
+                                                            "type": "1"
+                                                        }
+                                                    ]
+                                            },
+                                            {
+                                                "name": "f",
+                                                "type": "1",
+                                                "children":
+                                                    [
+                                                        {
+                                                            "name": "e",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "d",
+                                                            "type": "1"
+                                                        },
+                                                        {
+                                                            "name": "c",
+                                                            "type": "1"
+                                                        }
+                                                    ]
+                                            }
+                                        ]
+                                },
+                                {
+                                    "name": "b",
+                                    "type": "1"
+                                }
+                            ]
+                    },
+                    {
+                        "name": "苏高新工会二",
+                        "type": "1",
+                        "children":
+                            [
+                                {
+                                    "name": "XX",
+                                    "type": "1",
+                                    "children": []
+                                },
+                                {
+                                    "name": "XXX",
+                                    "type": "1"
+                                },
+                                {
+                                    "name": "XXXX",
+                                    "type": "1"
+                                }
+                            ]
+                    },
+                    {
+                        "name": "苏高新工会三",
+                        "type": "1",
+                        "children":
+                            [
+                                {
+                                    "name": "XX",
+                                    "type": "1",
+                                    "children": []
+                                },
+                                {
+                                    "name": "XXX",
+                                    "type": "1"
+                                },
+                                {
+                                    "name": "XXXX",
+                                    "type": "1"
+                                }
+                            ]
+                    },
+                    {
+                        "name": "苏高新工会四",
+                        "type": "1",
+                        "children":
+                            [
+                                {
+                                    "name": "XX",
+                                    "type": "1",
+                                    "children": [
+                                        {
+                                            "name": "A",
+                                            "type": "1",
+                                            "children": [
+                                                {
+                                                    "name": "C",
+                                                    "type": "1",
+                                                    "children": []
+                                                },
+                                                {
+                                                    "name": "D",
+                                                    "type": "1"
+                                                },
+                                                {
+                                                    "name": "E",
+                                                    "type": "1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "name": "B",
+                                            "type": "1",
+                                            "children": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "XXX",
+                                    "type": "1"
+                                }, {
+                                    "name": "XXXX",
+                                    "type": "1"
+                                }
+                            ]
+                    },
+                    {
+                        "name": "苏高新工会五",
+                        "type": "1",
+                        "children":
+                            [
+                                {
+                                    "name": "XX",
+                                    "type": "1",
+                                    "children": []
+                                },
+                                {
+                                    "name": "XXX",
+                                    "type": "1"
+                                },
+                                {
+                                    "name": "XXXX",
+                                    "type": "1"
+                                }
+                            ]
+                    },
+
+                ]
+        };
+        var option = {
+            dataUrl: jsonObject,
+            nodeHeight: 30,
+            selector: "#dynamicTree"
+        };
+        var tree = new Tree(option);
+        tree.init();
+    </script>
+</body>
+
+</html>

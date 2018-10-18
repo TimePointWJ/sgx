@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>组建选举</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <link href="../js/wdDate/wdDate.css" rel="stylesheet" />
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/wdDate/wdDate.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <script src="../js/storejson2.min.js"></script>
+    <script src="../js/fileinput.min.js"></script>
+    <script src="../js/fileinput_locale_zh.js"></script>
+    <script src="../js/moment.min.js"></script>
+    <style>
+        #table1 {
+            border: none;
+        }
+
+        #table2 {
+            border: none;
+        }
+
+        #title #biao a {
+            text-align: center;
+            width: 170px;
+            border-radius: unset;
+            line-height: 37px;
+        }
+        #title .m-style a {
+            text-align: center;
+            width: 170px;
+            border-radius: unset;
+            line-height: 37px;
+        }
+        .modal-footer{
+            border: none;
+        }
+        button{
+            outline: none !important;
+        }
+        /* #part2 div,
+        #part2 table {
+            border: none;
+            border-radius: unset;
+        }
+
+        #part4 div,
+        #part4 table {
+            border: none;
+            border-radius: unset;
+        } */
+
+        #part2 .m-style a {
+            width: 50px;
+        }
+
+        #part4 .m-style a {
+            width: 50px;
+        }
+        /*复选框样式调整*/
+
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        .no-records-found:hover {
+            color: red;
+        }
+
+        #action1 a {
+            text-decoration: none;
+            color: black;
+        }
+
+        #action2 a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left: 5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+
+        .squaredFour input[type=checkbox]:checked+label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background", "whitesmoke");
+            $("#table2 tr:even:gt(0)").css("background", "whitesmoke");
+            //时间格式控件
+            /*  $('.mydatepicker').dcalendarpicker();
+             $('.mydatepicker2').dcalendarpicker({
+                 format: 'yyyy-mm-dd'
+             });
+             $('.mycalendar').dcalendar(); */
+            common.setWdDate("#rq");
+            common.setWdDate("#rq1");
+
+
+            //            $("table tbody tr:not('.head'):not('.t-title'):even").css("background","whitesmoke")
+            $("table tbody tr:not('.head'):not('.t-title'):even input").css("background", "whitesmoke");
+            $("table tbody tr input").css("text-align", "center");
+
+            $("#biao a").click(function () {
+                var id = $(this).attr("id");
+                $(this).css("border", "1px solid red");
+                $(this).nextAll().css("border", "1px solid #ccc");
+                $(this).prevAll().css("border", "1px solid #ccc");
+                $("." + id).css("display", "block");
+                $("#form:not(." + id + ")").css("display", "none");
+                IFrameResize();
+            })
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+
+        //checkbox 全选/取消全选
+        var isCheckAll = false;
+        function swapCheck(that) {
+            if (isCheckAll) {
+
+                if (that.name === 'checkA') {
+                    Array.prototype.slice.call(document.getElementById('table1').getElementsByTagName('input')).forEach(function (input) {
+                        input.checked = false;
+                    });
+
+                } else if (that.name === 'checkB') {
+                    Array.prototype.slice.call(document.getElementById('table2').getElementsByTagName('input')).forEach(function (input) {
+                        input.checked = false;
+                    });
+                }
+                isCheckAll = false;
+            } else {
+                if (that.name === 'checkA') {
+                    Array.prototype.slice.call(document.getElementById('table1').getElementsByTagName('input')).forEach(function (input) {
+                        input.checked = true;
+                    });
+
+                } else if (that.name === 'checkB') {
+                    Array.prototype.slice.call(document.getElementById('table2').getElementsByTagName('input')).forEach(function (input) {
+                        input.checked = true;
+                    });
+                }
+                isCheckAll = true;
+            }
+        }
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="title" style="margin:0 auto">
+            <nav class="navbar navbar-default" style="margin-top: 0px; border-radius: unset; border: none; background: #d9534f;">
+                <div class="navbar-header">
+                    <!--<a class="navbar-brand" href="#"><b>组织成立申请单详情</b></a>-->
+                    <div id="biao" style="display: inline; position: absolute; left: 2%;">
+                        <a class="btn btn-default" id="houxuanren" style="border:1px solid red;">组建选举请示</a>
+                        <a class="btn btn-default" id="feeCheck" style="margin-left: -4px;"> 选举结果请示</a>
+                    </div>
+                </div>
+            </nav>
+            <div id="form" class="navbar navbar-default houxuanren" style="margin-top: 0px; background: white; border: none; border-radius: unset;">
+                <div id="part1" style="margin:0 auto">
+                    <div id="content1" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                        <div class="container-fluid" style="border-bottom: 1px solid #ccc; padding: 15px;">
+                            <div id="condition1">
+                                <div style="margin-bottom: 15px; display: inline;">
+                                    <span>关键词：
+                                        <input id="keyword" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                                    </span>
+                                </div>
+                                <div style=" margin-left: 30px; display: inline;" id="rq">
+                                    <!-- <span>日期：<input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                                    <span>至</span>
+                                    <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"> -->
+                                    <span>日期：</span>
+                                    <span>
+                                        <input type="text" placeholder="开始时间" style="width:180px" id="starttime" class="Wdate" name="operatetime_s" data-dateformat="yyyy-MM-dd"
+                                        />
+                                        <label> -- </label>
+                                        <input type="text" placeholder="结束时间" style="width:180px" id="endtime" class="Wdate" data-dateformat="yyyy-MM-dd" />
+                                    </span>
+                                </div>
+
+                                <div style="display:inline;margin-left: 50px;">
+                                    <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="part2" style="margin:0 auto">
+                    <div id="form1" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                        <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                            <!--弹出子模块1新增模态框-->
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width: 800px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background: indianred; color: white;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                            <h4 class="modal-title">新增选举</h4>
+                                        </div>
+                                        <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                            <div>标题:
+                                                <input id="electionTitle" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                                    placeholder="请输入标题">
+                                            </div>
+                                            <div style="margin-left: 12%;">
+                                                <div style="margin-top: 5px;float: left;">附件：
+                                                    <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                                                        <input id="attachment" name="fujian" type="file">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="sure" type="button" class="btn btn-danger">确定</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                            <!--弹出子模块1修改模态框-->
+                            <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width: 800px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background: indianred; color: white;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                            <h4 class="modal-title">修改选举</h4>
+                                        </div>
+                                        <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                            <div>标题:
+                                                <input id="electionTitle1" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                                    placeholder="请输入标题">
+                                            </div>
+                                            <div style="margin-left: 12%;">
+                                                <div style="margin-top: 5px;float: left;">附件：
+                                                    <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                                                        <input id="attachment1" name="fujian" type="file">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="sureUpdate" type="button" class="btn btn-danger">确定</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                            <div id="action" style="margin-top: -25px;">
+                                <a href="#" data-toggle="modal" data-target="#myModal">
+                                    <div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <!-- <div id="action1" style="margin-top: -25px;">
+                                <a href="ApplyOrg.html"><div class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;
+                            </div> -->
+                            <div class="fixed-table-container" style="padding-bottom: 0px;">
+                                <div class="fixed-table-body">
+                                    <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                                    <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                        data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]"
+                                        data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;">
+                                        <!--class="table-hover"-->
+                                        <thead style="background: whitesmoke;">
+                                            <tr>
+                                                <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                                    <div class="th-inner ">
+                                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                                        <section title=".squaredFour">
+                                                            <!-- .squaredFour -->
+                                                            <div class="squaredFour">
+                                                                <input type="checkbox" onclick="swapCheck(this)" value="None" id="1" name="checkA">
+                                                                <label for="1"></label>
+                                                            </div>
+                                                            <!-- end .squaredFour -->
+                                                        </section>
+                                                    </div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="name" tabindex="0">
+                                                    <div class="th-inner">序号</div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="sex" tabindex="0">
+                                                    <div class="th-inner">标题</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                                    <div class="th-inner">申请时间</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="education" tabindex="0">
+                                                    <div class="th-inner">当前状态</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+
+                                                <th style="text-align: center;width: 200px;" data-field="job" tabindex="0">
+                                                    <div class="th-inner">操作</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="" id="electionContainer">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="m-style" style="display: block;float: right">
+                                    <nav aria-label="Page navigation">
+                                        <div id="Pagination" class="pagination">
+
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/ractive" id="electionTemplate">
+                                        {{#if data}}
+                                        {{#each data : i}}
+                                        <tr class="no-records-found">
+                                            <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                                <div class="th-inner ">
+                                                    <!--<input name="btSelectAll" type="checkbox">-->
+                                                    <section title=".squaredFour">
+                                                        <!-- .squaredFour -->
+                                                        <div class="squaredFour">
+                                                            <input type="checkbox" value="None" id="{{i+2}}" name="squaredFour"  />
+                                                            <label for="{{i+2}}"></label>
+                                                        </div>
+                                                        <!-- end .squaredFour -->
+                                                    </section>
+                                                </div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <!-- <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{i}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td> -->
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <!-- <div class="th-inner sortable">{{(data.currPage-1)*5+i+1}}</div> -->
+                                                <div class="th-inner sortable ">{{i+1}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">{{data[i].electionTitle}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{formatD(data[i].createTime)}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                            <!-- <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].applyYear}}-{{data[i].applyMouth}}-{{data[i].applyDay}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td> -->
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable ">{{data[i].electionState}}</div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+
+                                            <td style="text-align: center;" data-field="name" tabindex="0">
+                                                <div class="th-inner sortable">
+                                                    <a href='#' on-click="xg" id="xg" data-toggle="modal" data-target="#myModal1"><div class="icon-check" style="color: red;"></div> 查看详情</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <a href='#' on-click="xg" id="xg" data-toggle="modal" data-target="#myModal1"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    <a href="#" on-click="sc"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                </div>
+                                                <div class="fht-cell"></div>
+                                            </td>
+                                        </tr>
+                                        {{/each}}
+                                        {{/if}}
+        </script>
+            <script>
+                $(function () {
+                    var data = store.get('data');
+                    var setting1 = {
+                        language: 'zh', //设置语言
+                        uploadUrl: "../../../file/fileUpload?id=fujian", //上传的地址(访问接口地址)
+                        allowedFileExtensions: ['doc', 'docx', 'xls', 'xlsx'],//接收的文件后缀
+                        //uploadExtraData:{"fileName":"1111"},
+                        uploadAsync: true, //默认异步上传
+                        showUpload: true, //是否显示上传按钮
+                        showRemove: true, //显示移除按钮
+                        showPreview: true, //是否显示预览
+                        previewSettings: {
+                            image: { width: "221px", height: "160px" },
+                        },
+                        showCaption: true,//是否显示标题
+                        browseClass: "btn btn-primary", //按钮样式     
+                        dropZoneEnabled: false,//是否显示拖拽区域
+                        maxFileCount: 1, //表示允许同时上传的最大文件个数
+                        enctype: 'multipart/form-data',
+                        validateInitialCount: true,
+                        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                    };
+                    $('#attachment').fileinput(setting1).on("fileuploaded", function (event, data, previewId, index) {
+                        //p.fj = data.response.obj;
+                        $(".file-object").attr("code", data.response.obj)
+                    });
+                    $('#attachment1').fileinput(setting1).on("fileuploaded", function (event, data, previewId, index) {
+                        //p.fj = data.response.obj;
+                        $(".file-object").attr("code", data.response.obj)
+                    });
+                    // if (data) {
+                    //     $("#electionTitle1").val(data.electionTitle)
+                    // }
+                })
+                var address_app = function () {
+                    var pageSize = 5;
+                    var page = 1;
+                    var initFlag = true;
+                    var ractive;
+                    function renderView() {
+                        ractive = new Ractive({
+                            el: "#electionContainer",
+                            template: "#electionTemplate",
+                            onrender: function () { },
+                            data: {
+                                formatD: function (d) {
+                                    if (d) {
+                                        return moment(d).format("YYYY-MM-DD HH:mm:ss");
+                                    }
+                                }
+                            },
+                            oncomplete: function () {
+                                getDataList(1, null)
+                            }
+                        })
+                        ractive.on({
+                            xg: function (e) {
+                                var id = e.context.id;
+                                var data = e.context;
+                                store.set("id", id);
+                                //store.set("data", data);
+                                $("#electionTitle1").val(data.electionTitle)
+                            },
+                            sc: function (e) {
+                                $.ajax({
+                                    url: Constants.path + "election/deleteElection/" + e.context.id,
+                                    type: "get",
+                                    success: function (response) {
+                                        alert("删除成功!")
+                                        window.location.href = "MainMenuElection.html"
+                                    }
+                                });
+                            }
+                        })
+                    }
+                    $("#btnSearch").click(function () {
+                        initFlag = true;
+                        getDataList(1, null)
+                    })
+                    $("#sure").click(function () {
+                        var param = {};
+                        param.electionTitle = $("#electionTitle").val();
+                        param.attachment = typeof ($(".file-object").attr("code")) == 'undefined' ? "" : $(".file-object").attr("code");
+                        param.type = 1;
+                        $.ajax({
+                            type: "post",
+                            url: Constants.path + "election/addElection",
+                            data: JSON.stringify(param),
+                            dataType: "json",
+                            contentType: "application/json",
+                            success: function (data) {
+                                alert("新增成功！")
+                                //$('#myModal').modal('hide');
+                                window.location.href = 'MainMenuElection.html';
+                            }
+                        })
+                    })
+                    $("#sureUpdate").click(function () {
+                        var param = {};
+                        param.electionTitle = $("#electionTitle1").val();
+                        param.attachment = typeof ($(".file-object").attr("code")) == 'undefined' ? "" : $(".file-object").attr("code");
+                        param.type = 1;
+                        param.id = store.get('id');
+                        $.ajax({
+                            type: "post",
+                            url: Constants.path + "election/updateElection",
+                            data: JSON.stringify(param),
+                            dataType: "json",
+                            contentType: "application/json",
+                            success: function (data) {
+                                alert("修改成功！")
+                                window.location.href = 'MainMenuElection.html';
+                            }
+                        })
+                    })
+                    var getDataList = function (currPage, jg) {
+                        var param = { pageSize: pageSize, page: currPage, type: 1 }
+                        param.title = $("#keyword").val();
+                        param.startTime = $("#starttime").val();
+                        param.endTime = $("#endtime").val();
+                        $.ajax({
+                            url: Constants.path + "election/getElectionList",
+                            type: "post",
+                            dataType: 'json',
+                            data: JSON.stringify(param),
+                            contentType: "application/json",
+                            success: function (response) {
+                                if (response) {
+                                    ractive.set("data", response.data);
+                                    if (initFlag) {
+                                        $("#Pagination").pagination(
+                                            {
+                                                pageCount: Math.ceil(response.total / pageSize),
+                                                totalData: response.total,
+                                                showData: pageSize,
+                                                callback: function (api) {
+                                                    getDataList(api.getCurrent(), null)
+                                                }//回调函数
+                                            });
+                                        initFlag = false;
+                                    }
+                                } else {
+                                    //暂无数据
+                                }
+                            }
+                        });
+                    }
+                    return {
+                        init: function () {
+                            renderView();
+                        }
+                    }
+                }();
+                $(document).ready(address_app.init)
+            </script>
+            <div id="form" class="navbar navbar-default feeCheck" style="margin-top: 0px; display: none; background: white; border: none; border-radius: unset;">
+                <div id="part3" style="margin:0 auto">
+                    <div id="content2" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                        <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                            <div id="condition2">
+                                <div style="margin-bottom: 15px; display: inline;">
+                                    <span>关键词：
+                                        <input id="keyword1"type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                                    </span>
+                                </div>
+                                <div style=" margin-left: 30px; display: inline;" id="rq1">
+                                    <span>日期：
+                                        <input id="startTime1" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                                    </span>
+                                    <span>至</span>
+                                    <input id="endTime1" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                                </div>
+
+                                <div style="display:inline;margin-left: 50px;">
+                                    <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch1">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="part4" style="margin:0 auto">
+                    <div id="form2" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+                        <div style="width: 100%; padding: 15px;  margin: 5px 10px 25px 10px;">
+                            <div id="action" style="margin-top: -25px;">
+                                <a href="#" data-toggle="modal" data-target="#myModal00">
+                                    <div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <!--弹出子模块1新增模态框-->
+                            <div class="modal fade" id="myModal00" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width: 800px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background: indianred; color: white;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                            <h4 class="modal-title">新增选举</h4>
+                                        </div>
+                                        <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题
+                                                <input id="electionTitle00" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                                    placeholder="请输入标题">
+                                            </div>
+                                            <div style="margin-left: 12%;">
+                                                <div style="margin-top: 5px;float: left;">附件：
+                                                    <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                                                        <input id="attachment00" name="fujian" type="file">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="sure1" type="button" class="btn btn-danger">确定</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                            <!--弹出子模块1修改模态框-->
+                            <div class="modal fade" id="myModal01" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width: 800px;">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background: indianred; color: white;">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                            <h4 class="modal-title">修改选举</h4>
+                                        </div>
+                                        <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                            <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;标题
+                                                <input id="electionTitle01" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;"
+                                                    placeholder="请输入标题">
+                                            </div>
+                                            <div style="margin-left: 12%;">
+                                                <div style="margin-top: 5px;float: left;">附件：
+                                                    <div style="float: right;width: 83%;margin-left: -13%;padding-right: 26%">
+                                                        <input id="attachment01" name="fujian" type="file">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="sureUpdate1" type="button" class="btn btn-danger">确定</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                                        </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                            <div class="fixed-table-container" style="padding-bottom: 0px;">
+                                <div class="fixed-table-body">
+                                    <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                                    <table id="table2" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                        data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]"
+                                        data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;">
+                                        <!--class="table-hover"-->
+                                        <thead style="background: whitesmoke;">
+                                            <tr>
+                                                <th class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                                                    <div class="th-inner ">
+                                                        <!--<input name="btSelectAll" type="checkbox">-->
+                                                        <section title=".squaredFour">
+                                                            <!-- .squaredFour -->
+                                                            <div class="squaredFour">
+                                                                <input type="checkbox" onclick="swapCheck(this)" value="None" id="8" name="checkB">
+                                                                <label for="8"></label>
+                                                            </div>
+                                                            <!-- end .squaredFour -->
+                                                        </section>
+                                                    </div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="name" tabindex="0">
+                                                    <div class="th-inner">标题</div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="sex" tabindex="0">
+                                                    <div class="th-inner">单位名称</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                                    <div class="th-inner">申请时间</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                                <th style="text-align: center;" data-field="education" tabindex="0">
+                                                    <div class="th-inner">当前状态</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+
+                                                <th style="text-align: center;width: 200px;" data-field="job" tabindex="0">
+                                                    <div class="th-inner">操作</div>
+                                                    <div class="fht-cell"></div>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="" id="electionContainer1">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="m-style" style="display: block;float: right">
+                                    <nav aria-label="Page navigation">
+                                        <div id="Pagination1" class="pagination">
+
+                                        </div>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script type="text/ractive" id="electionTemplate1">
+                {{#if data}}
+                {{#each data : i}}
+                <tr class="no-records-found">
+                    <td class="bs-checkbox " style="text-align: center; vertical-align: middle; width: 36px;" data-field="state" tabindex="0">
+                        <div class="th-inner ">
+                            <!--<input name="btSelectAll" type="checkbox">-->
+                            <section title=".squaredFour">
+                                <!-- .squaredFour -->
+                                <div class="squaredFour">
+                                    <input type="checkbox" value="None" id="{{i+2}}" name="squaredFour"  />
+                                    <label for="{{i+2}}"></label>
+                                </div>
+                                <!-- end .squaredFour -->
+                            </section>
+                        </div>
+                        <div class="fht-cell"></div>
+                    </td>
+                    <!-- <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable ">{{i}}</div>
+                        <div class="fht-cell"></div>
+                    </td> -->
+                    <td style="text-align: center;" data-field="name" tabindex="0">
+                        <!-- <div class="th-inner sortable">{{(data.currPage-1)*5+i+1}}</div> -->
+                        <div class="th-inner sortable ">{{i+1}}</div>
+                        <div class="fht-cell"></div>
+                    </td>
+                    <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable">{{data[i].electionTitle}}</div>
+                        <div class="fht-cell"></div>
+                    </td>
+                    <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable ">{{formatD(data[i].createTime)}}</div>
+                        <div class="fht-cell"></div>
+                    </td>
+                    <!-- <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable ">{{data[i].applyYear}}-{{data[i].applyMouth}}-{{data[i].applyDay}}</div>
+                        <div class="fht-cell"></div>
+                    </td> -->
+                    <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable ">{{data[i].electionState}}</div>
+                        <div class="fht-cell"></div>
+                    </td>
+
+                    <td style="text-align: center;" data-field="name" tabindex="0">
+                        <div class="th-inner sortable">
+                            <a href='#' on-click="xg" id="xg" data-toggle="modal" data-target="#myModal01"><div class="icon-check" style="color: red;"></div> 查看详情</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href='#' on-click="xg" id="xg" data-toggle="modal" data-target="#myModal01"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="#" on-click="sc"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </div>
+                        <div class="fht-cell"></div>
+                    </td>
+                </tr>
+                {{/each}}
+                {{/if}}
+        </script>
+            <script>
+                $(function () {
+                    var data = store.get('data');
+                    var setting1 = {
+                        language: 'zh', //设置语言
+                        uploadUrl: "../../../file/fileUpload?id=fujian", //上传的地址(访问接口地址)
+                        allowedFileExtensions: ['doc', 'docx', 'xls', 'xlsx'],//接收的文件后缀
+                        //uploadExtraData:{"fileName":"1111"},
+                        uploadAsync: true, //默认异步上传
+                        showUpload: true, //是否显示上传按钮
+                        showRemove: true, //显示移除按钮
+                        showPreview: true, //是否显示预览
+                        previewSettings: {
+                            image: { width: "221px", height: "160px" },
+                        },
+                        showCaption: true,//是否显示标题
+                        browseClass: "btn btn-primary", //按钮样式     
+                        dropZoneEnabled: false,//是否显示拖拽区域
+                        maxFileCount: 1, //表示允许同时上传的最大文件个数
+                        enctype: 'multipart/form-data',
+                        validateInitialCount: true,
+                        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                        msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+                    };
+                    $('#attachment00').fileinput(setting1).on("fileuploaded", function (event, data, previewId, index) {
+                        //p.fj = data.response.obj;
+                        $(".file-object").attr("code", data.response.obj)
+                    });
+                    $('#attachment01').fileinput(setting1).on("fileuploaded", function (event, data, previewId, index) {
+                        //p.fj = data.response.obj;
+                        $(".file-object").attr("code", data.response.obj)
+                    });
+                    // if (data) {
+                    //     $("#electionTitle01").val(data.electionTitle)
+                    // }
+                })
+                var address1_app = function () {
+
+                    var pageSize = 5;
+                    var page = 1;
+                    var initFlag = true;
+                    var ractive;
+                    function renderView1() {
+                        ractive = new Ractive({
+                            el: "#electionContainer1",
+                            template: "#electionTemplate1",
+                            onrender: function () { },
+                            data: {
+                                formatD: function (d) {
+                                    if (d) {
+                                        return moment(d).format("YYYY-MM-DD HH:mm:ss");
+                                    }
+                                }
+                            },
+                            oncomplete: function () {
+                                getDataList1(1, null)
+                            }
+                        })
+                        ractive.on({
+                            xg: function (e) {
+                                var id = e.context.id;
+                                var data = e.context;
+                                store.set("id", id);
+                                //store.set("data", data);
+                                $("#electionTitle01").val(data.electionTitle)
+                            },
+                            sc: function (e) {
+                                $.ajax({
+                                    url: Constants.path + "election/deleteElection/" + e.context.id,
+                                    type: "get",
+                                    success: function (response) {
+                                        alert("删除成功!")
+                                        window.location.href = "MainMenuElection.html"
+                                    }
+                                });
+                            }
+                        })
+                    }
+                    $("#btnSearch1").click(function () {
+                        initFlag = true;
+                        getDataList1(1, null)
+                    })
+                    $("#sure1").click(function () {
+                        var param = {};
+                        param.electionTitle = $("#electionTitle00").val();
+                        param.attachment = typeof ($(".file-object").attr("code")) == 'undefined' ? "" : $(".file-object").attr("code");
+                        param.type = 6;
+                        $.ajax({
+                            type: "post",
+                            url: Constants.path + "election/addElection",
+                            data: JSON.stringify(param),
+                            dataType: "json",
+                            contentType: "application/json",
+                            success: function (data) {
+                                alert("新增成功！")
+                                window.location.href = 'MainMenuElection.html';
+                            }
+                        })
+                    })
+                    $("#sureUpdate1").click(function () {
+                        var param = {};
+                        param.electionTitle = $("#electionTitle01").val();
+                        param.attachment = typeof ($(".file-object").attr("code")) == 'undefined' ? "" : $(".file-object").attr("code");
+                        //param.type = 6;
+                        param.id = store.get('id');
+                        $.ajax({
+                            type: "post",
+                            url: Constants.path + "election/updateElection",
+                            data: JSON.stringify(param),
+                            dataType: "json",
+                            contentType: "application/json",
+                            success: function (data) {
+                                alert("修改成功！")
+                                window.location.href = 'MainMenuElection.html';
+                            }
+                        })
+                    })
+                    var getDataList1 = function (currPage, jg) {
+                        var param = { pageSize: pageSize, page: currPage, type: 6 }
+                        param.title = $("#keyword1").val();
+                        param.startTime = $("#startTime1").val();
+                        param.endTime = $("#endTime1").val();
+                        $.ajax({
+                            url: Constants.path + "election/getElectionList",
+                            type: "post",
+                            dataType: 'json',
+                            data: JSON.stringify(param),
+                            contentType: "application/json",
+                            success: function (response) {
+                                if (response) {
+                                    ractive.set("data", response.data);
+                                    if (initFlag) {
+                                        $("#Pagination1").pagination(
+                                            {
+                                                pageCount: Math.ceil(response.total / pageSize),
+                                                totalData: response.total,
+                                                showData: pageSize,
+                                                callback: function (api) {
+                                                    getDataList1(api.getCurrent(), null)
+                                                }//回调函数
+                                            });
+                                        initFlag = false;
+                                    }
+                                } else {
+                                    //暂无数据
+                                }
+                            }
+                        });
+                    }
+                    return {
+                        init: function () {
+                            renderView1();
+                        }
+                    }
+                }();
+                $(document).ready(address1_app.init)
+            </script>
+        </div>
+    </div>
+</body>
+
+</html>

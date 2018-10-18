@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionSourceMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionSource">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="attachment_source" jdbcType="CHAR" property="attachmentSource" />
+    <result column="source_id" jdbcType="BIGINT" property="sourceId" />
+    <result column="file_type" jdbcType="CHAR" property="fileType" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, attachment_source, source_id, file_type, file_name, file_url, creat_time, delflag
+  </sql>
+  <select id="selectSource" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_source
+    where delflag != 'D'
+    and attachment_source = #{source}
+    and source_id = #{id} and attachment_source =#{source}
+  </select>
+  <update id="removeSource">
+     update union_source
+     set delflag = 'D'
+    where  source_id = #{newsId} and attachment_source = #{type}
+  </update>
+  <insert id="insertSource" parameterType="com.jtzh.entity.UnionSource">
+    insert into union_source (id, attachment_source, source_id, 
+      file_type, file_name, file_url, 
+      creat_time, delflag)
+    values (#{id,jdbcType=BIGINT}, #{attachmentSource,jdbcType=CHAR}, #{sourceId,jdbcType=BIGINT}, 
+      #{fileType,jdbcType=CHAR}, #{fileName,jdbcType=VARCHAR}, #{fileUrl,jdbcType=VARCHAR}, 
+      #{creatTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionSource">
+    update union_source
+    set attachment_source = #{attachmentSource,jdbcType=CHAR},
+      source_id = #{sourceId,jdbcType=BIGINT},
+      file_type = #{fileType,jdbcType=CHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      file_url = #{fileUrl,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

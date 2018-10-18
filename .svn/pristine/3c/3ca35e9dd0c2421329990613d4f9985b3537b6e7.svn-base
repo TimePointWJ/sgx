@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionUnionMapper">
+	<resultMap id="BaseResultMap" type="com.jtzh.entity.UnionUnion">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="union_name" jdbcType="VARCHAR" property="unionName" />
+		<result column="superior_union_name" jdbcType="VARCHAR"
+			property="superiorUnionName" />
+		<result column="superior_union_id" jdbcType="INTEGER" property="superiorUnionId" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="delflag" jdbcType="CHAR" property="delflag" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, union_name, superior_union_name, superior_union_id, create_time,
+		delflag
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_union
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from union_union
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.jtzh.entity.UnionUnion">
+		insert into union_union (id, union_name, superior_union_name,
+		superior_union_id, create_time, delflag
+		)
+		values (#{id,jdbcType=INTEGER}, #{unionName,jdbcType=VARCHAR},
+		#{superiorUnionName,jdbcType=VARCHAR},
+		#{superiorUnionId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{delflag,jdbcType=CHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.jtzh.entity.UnionUnion">
+		insert into union_union
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="unionName != null">
+				union_name,
+			</if>
+			<if test="superiorUnionName != null">
+				superior_union_name,
+			</if>
+			<if test="superiorUnionId != null">
+				superior_union_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="delflag != null">
+				delflag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="unionName != null">
+				#{unionName,jdbcType=VARCHAR},
+			</if>
+			<if test="superiorUnionName != null">
+				#{superiorUnionName,jdbcType=VARCHAR},
+			</if>
+			<if test="superiorUnionId != null">
+				#{superiorUnionId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delflag != null">
+				#{delflag,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionUnion">
+		update union_union
+		<set>
+			<if test="unionName != null">
+				union_name = #{unionName,jdbcType=VARCHAR},
+			</if>
+			<if test="superiorUnionName != null">
+				superior_union_name = #{superiorUnionName,jdbcType=VARCHAR},
+			</if>
+			<if test="superiorUnionId != null">
+				superior_union_id = #{superiorUnionId,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="delflag != null">
+				delflag = #{delflag,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionUnion">
+		update union_union
+		set union_name = #{unionName,jdbcType=VARCHAR},
+		superior_union_name = #{superiorUnionName,jdbcType=VARCHAR},
+		superior_union_id = #{superiorUnionId,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		delflag = #{delflag,jdbcType=CHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectUnitList" parameterType="com.jtzh.common.page.Page"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_union
+		where delflag != 'D'
+		<if test="page.param.unionName != null and page.param.unionName != ''">
+			and union_name like concat('%', #{page.param.unionName}, '%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+		<if
+			test="page.param.superiorUnionName != null and page.param.superiorUnionName != ''">
+			and superior_union_name like concat('%',
+			#{page.param.superiorUnionName}, '%')
+		</if>
+		order by create_time asc
+		limit #{page.start},#{page.pageSize}
+	</select>
+
+	<select id="selectTotal" parameterType="com.jtzh.common.page.Page"
+		resultType="java.lang.Integer">
+		select count(1)
+		from union_union
+		where delflag != 'D'
+		<if test="page.param.unionName != null and page.param.unionName != ''">
+			and union_name like concat('%', #{page.param.unionName}, '%')
+		</if>
+		<if test="page.param.startTime != null and page.param.startTime != ''">
+			and create_time &gt; #{page.param.startTime}
+		</if>
+		<if test="page.param.endTime != null and page.param.endTime != ''">
+			and create_time &lt; #{page.param.endTime}
+		</if>
+		<if
+			test="page.param.superiorUnionName != null and page.param.superiorUnionName != ''">
+			and superior_union_name like concat('%',
+			#{page.param.superiorUnionName}, '%')
+		</if>
+
+	</select>
+	<update id="updateUnit">
+		update union_union
+		set
+		delflag = 'D'
+		where id = #{id}
+	</update>
+	<select id="getUnitByName" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_union where delflag <![CDATA[<>]]>
+		'D' and union_name = #{superiorUnionName}
+	</select>
+	<select id="selectBySuperId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from union_union
+		where superior_union_id = #{id,jdbcType=INTEGER}
+	</select>
+</mapper>

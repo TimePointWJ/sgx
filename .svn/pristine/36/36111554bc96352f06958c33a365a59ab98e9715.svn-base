@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>权益保障工作</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <link rel="stylesheet" href="../css/pagination.css">
+    <link href="../js/wdDate/wdDate.css" rel="stylesheet" />
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/jquery.pagination.js"></script>
+    <script src="../js/storejson2.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/wdDate/wdDate.js"></script>
+    <script src="../js/moment.min.js"></script>
+    <style>
+        #table1 {
+            border: none;
+        }
+
+        #part2 div,
+        #part2 table {
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a {
+            width: 50px;
+        }
+
+        #table1 div {
+            margin: 15px;
+            float: left;
+            display: inline;
+            border-radius: 10px;
+            box-shadow: 1px 1px 1px 1px #c2ccd1;
+            background: white;
+            width: 320px;
+            height: 200px;
+            cursor: pointer;
+            padding: 8px 15px;
+        }
+
+        #table1 div p {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        #table1 div span {
+            color: #ccc;
+            font-size: 12px;
+            margin-right: 15px;
+        }
+
+        #table1 div a {
+            font-size: 12px;
+            display: inline-block;
+            width: 32%;
+            text-align: left;
+            text-decoration: none;
+            color: black;
+            margin-top: 25px;
+            border-top: 1px solid #ccc;
+            padding-top: 3px;
+        }
+
+        #table1 div a:hover {
+            color: red;
+        }
+
+        #action a {
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+    <script>
+        $(function () {
+            $("#table1 div").mouseover(function () {
+                $(this).css({ "background": "whitesmoke" });
+            }).mouseleave(function () {
+                $(this).css({ "background": "white" });
+            })
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format: 'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+            common.setWdDate("#rq");
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+    </script>
+</head>
+
+<body style="width: 100%; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+    <div id="container ">
+        <div id="part1">
+            <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+                <div class="container-fluid" style="border-left:6px solid red;">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#" style="color: #000;">
+                            <b>权益保障工作</b>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <div id="content" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+                <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                    <div id="condition">
+                        <div style="margin-bottom: 15px; display: inline;">
+                            <span>关键词：
+                                <input id="titleName" type='text' placeholder="请输入关键词" style="width: 160px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </span>
+                        </div>
+                        <!-- <div style=" margin-left: 30px; display: inline;">
+                            <span>日期：
+                                <input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                            </span>
+                            <span>至</span>
+                            <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;">
+                        </div> -->
+                        <div style=" margin-left: 30px; display: inline;" id="rq">
+                            <!-- <span>日期：<input id="startTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                                <span>至</span>
+                                <input id="endTime" class='mydatepicker2' type='text' style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"> -->
+                            <span>日期：</span>
+                            <span>
+                                <input type="text" placeholder="开始时间" style="width:180px" id="startTime" class="Wdate" name="operatetime_s" data-dateformat="yyyy-MM-dd"
+                                />
+                                <label> -- </label>
+                                <input type="text" placeholder="结束时间" style="width:180px" id="endTime" class="Wdate" data-dateformat="yyyy-MM-dd" />
+                            </span>
+                        </div>
+
+                        <div style="display:inline;margin-left: 50px;">
+                            <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch">搜索</button>
+                        </div>
+                        <div id="action" style="margin-top: 10px;">
+                            <a id="create" href="NewInterestWork.html">
+                                <div id="add" class="icon-plus" style="color:red;"></div>新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="#" id="refresh">
+                                <div class="icon-refresh" style="color: red;"></div> 刷新</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="part2" style="margin:0 auto; background: lightgrey; ">
+            <div id="form" class="navbar navbar-default" style="margin-top: -35px; border: none; border-radius: unset;">
+                <div style="width: 100%; padding: 15px;  margin: 0px auto;">
+                    <div class="" style="padding-bottom: 0px;">
+                        <div class="fixed-table-body">
+                            <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                            <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true"
+                                data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id"
+                                data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;"
+                                class="">
+                                <tbody style="" id="workContainer">
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="m-style" style="display: block;float: right">
+                            <nav aria-label="Page navigation">
+                                <div id="Pagination" class="pagination">
+
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/ractive" id="workTemplate">
+                                    {{#if data && data.length>0}}
+
+                                    {{#each data : i}}
+                                    {{#if i%3 === 0}}
+                                        <tr>
+                                            <td>
+                                                <div id='{{i}}' style="display:{{data[i] === undefined  ? 'none': 'block'}}">
+                                                    <p>
+                                                        {{data[i].newsTitle}}
+                                                    </p>
+                                                    <p>
+                                                       {{data[i].noticeSynopsis}}
+                                                    </p>
+                                                    <span>{{data[i].createName}}</span>
+                                                    <span>{{formatD(data[i].createTime)}}</span>
+                                                    <br>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i].id}}')">查看详情</a>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i].id}}')">修改</a>
+                                                    <a style="text-align: right;" onclick="sc('{{data[i].id}}')">删除</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div id='{{i+1}}' style="display:{{data[i+1] === undefined  ? 'none': 'block'}}">
+                                                    <p>
+                                                        {{data[i+1].newsTitle}}
+                                                    </p>
+                                                    <p>
+                                                       {{data[i+1].noticeSynopsis}}
+                                                    </p>
+                                                    <span>{{data[i+1].createName}}</span>
+                                                    <span>{{formatD(data[i+1].createTime)}}</span>
+                                                    <br>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i+1].id}}')">查看详情</a>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i+1].id}}')">修改</a>
+                                                    <a style="text-align: right;" onclick="sc('{{data[i+1].id}}')">删除</a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div id='{{i+2}}' style="display:{{data[i+2] === undefined  ? 'none': 'block'}}">
+                                                    <p>
+                                                        {{data[i+2].newsTitle}}
+                                                    </p>
+                                                    <p>
+                                                       {{data[i+2].noticeSynopsis}}
+                                                    </p>
+                                                    <span>{{data[i+2].createName}}</span>
+                                                    <span>{{formatD(data[i+2].createTime)}}</span>
+                                                    <br>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i+2].id}}')">查看详情</a>
+                                                    <a style="text-align: right;" onclick="xg('{{data[i+2].id}}')">修改</a>
+                                                    <a style="text-align: right;" onclick="sc('{{data[i+2].id}}')">删除</a>
+                                                </div>
+                                            </td>
+                                       </tr>
+                                    {{/if}}
+                                    {{/each}}
+
+                                    {{/if}}
+    </script>
+    <script>
+        function xg(obj) {
+            var id = obj;
+            store.set("id", id);
+            store.set("createOrUpdate", "update");
+            $.ajax({
+                url: Constants.path + "news/getNewsInfo/" + obj,
+                type: "get",
+                success: function (response) {
+                    store.set("data", response)
+                    window.location.href = "NewInterestWork.html";
+                }
+            });
+        }
+        function sc(obj) {
+            $.ajax({
+                url: Constants.path + "news/removeNews/" + obj,
+                type: "get",
+                success: function (response) {
+                    alert("删除成功")
+                    window.location.href = 'InterestWork.html';
+                }
+            });
+        }
+        var address_app = function () {
+
+            var pageSize = 6;
+            var page = 1;
+            var initFlag = true;
+            var ractive;
+            function renderView() {
+                ractive = new Ractive({
+                    el: "#workContainer",
+                    template: "#workTemplate",
+                    onrender: function () { },
+                    data: {
+                        formatD: function (d) {
+                            if (d) {
+                                return moment(d).format("YYYY-MM-DD HH:mm:ss");
+                            }
+                        }
+                    },
+                    oncomplete: function () {
+
+                        getDataList(1, null)
+
+                    }
+                })
+            }
+            $("#create").click(function () {
+                store.set("createOrUpdate", "create");
+            });
+            $("#refresh").click(function () {
+                window.location.href = 'InterestWork.html';
+            });
+            $("#btnSearch").click(function () {
+                initFlag = true;
+                getDataList(1, null)
+            });
+            var getDataList = function (currPage, jg) {
+                var param = { pageSize: pageSize, page: currPage, source: 6 }
+                param.titleName = $("#titleName").val();
+                param.startTime = $("#startTime").val();
+                param.endTime = $("#endTime").val();
+                $.ajax({
+                    url: Constants.path + "news/getNews",
+                    type: "post",
+                    dataType: 'json',
+                    data: JSON.stringify(param),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response) {
+
+
+                            $("#Pagination").pagination(
+                                {
+                                    pageCount: Math.ceil(response.total / pageSize),
+                                    totalData: response.total,
+                                    showData: pageSize,
+                                    current:currPage,
+                                    callback: function (api) {
+                                        getDataList(api.getCurrent(), null)
+                                    }//回调函数
+                                });
+                            initFlag = false;
+                            if (response.data != null && response.data != "") {
+                                ractive.set("data", response.data);
+                            }
+                            else {
+                                ractive.set("data", "");
+                            }
+
+                        } else {
+                            //暂无数据
+                        }
+                    }
+                });
+            }
+            return {
+                init: function () {
+                    renderView();
+                }
+            }
+        }();
+        $(document).ready(address_app.init)
+    </script>
+</body>
+
+</html>

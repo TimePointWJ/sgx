@@ -1,0 +1,35 @@
+package com.jtzh.service;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.entity.UnionUser;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.jtzh.mapper.UnionUserMapper;
+
+@Service("unionUserService")
+public class UnionUserServiceIpl implements UnionUserService {
+
+	protected static final org.slf4j.Logger logger = LoggerFactory.getLogger(UnionUserService.class);
+	@Resource
+	private UnionUserMapper unionUserMapper;
+	@Override
+	public Object getUser(HttpServletRequest request,UnionUser user) {
+		UnionUser unionUser =unionUserMapper.getUser(user.getLoginId());
+		ResultObject object =  new ResultObject();
+		object.setResult(false);
+		if(unionUser !=null &&  user.getPassword().equals(unionUser.getPassword())){
+			request.getSession().setAttribute("user",unionUser);
+			request.getSession().setMaxInactiveInterval(-1);
+			logger.info(unionUser.getLoginId()+"登陆成功");
+			object.setResult(true);
+            unionUser.setPassword("");
+            unionUser.setSessionId(request.getSession().getId());
+            object.setObj(unionUser);
+		}
+		return object;
+	}
+}

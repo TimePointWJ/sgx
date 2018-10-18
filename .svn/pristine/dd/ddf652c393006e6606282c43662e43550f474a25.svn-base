@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通讯录</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/dcalendar.picker.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <script src="../js/constants.js"></script>
+    <script src="../js/ractive-legacy.js"></script>
+    <script src="../js/storejson2.min.js"></script>
+
+    <style>
+        #table1{
+            border: none;
+        }
+        #part2 div, #part2 table{
+            border: none;
+            border-radius: unset;
+        }
+
+        #part2 a{
+            width: 50px;
+        }
+        /*复选框样式调整*/
+        .squaredFour {
+            width: 20px;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        #action a{
+            text-decoration: none;
+            color: black;
+        }
+        .squaredFour label {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            position: absolute;
+            border: 1px solid cornflowerblue;
+            top: 0;
+            left: 0;
+            background: #fcfff4;
+            background: -moz-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            border-radius: 4px;
+        }
+        .squaredFour label:after {
+            content: '';
+            width: 9px;
+            height: 5px;
+            position: absolute;
+            top: 6px;
+            left:5px;
+            border: 3px solid #333;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+            opacity: 0;
+            -moz-transform: rotate(-45deg);
+            -ms-transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+            transform: rotate(-45deg);
+        }
+        .squaredFour label:hover::after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+            opacity: 0.5;
+        }
+        .squaredFour input[type=checkbox] {
+            visibility: hidden;
+        }
+        .squaredFour input[type=checkbox]:checked + label:after {
+            filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+            opacity: 1;
+        }
+    </style>
+
+    <script>
+        $(function () {
+            $("#table1 tr:even:gt(0)").css("background","whitesmoke");
+        })
+
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+    </script>
+</head>
+<body style="width: 1145px; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+<div id="container ">
+    <div id="part1">
+        <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+            <div class="container-fluid" style="border-left:6px solid red;">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#" style="color: #000;"><b>通讯录</b></a>
+                </div>
+            </div>
+        </nav>
+        <div id="content" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; padding: 15px; border-radius: unset;">
+            <div class="container-fluid" style="width: 1100px; border-bottom: 1px solid #ccc; padding: 15px;">
+                <div id="condition">
+                    <div style="margin-bottom: 15px; display: inline;">
+                        <span>姓名：<input type='text' placeholder="请输入人员名称" style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                    </div>
+                    <div class="form-group" style="display: inline; margin-left: 30px;">
+                        <span>职业：<input type='text' placeholder="请输入所属部门" style="width: 140px; border-radius: 30px; background:whitesmoke; border:1px solid #ccc; text-align: center;"></span>
+                    </div>
+                    <div class="form-group" style="display: inline; margin-left: 30px;">
+                        <span>职务：</span>
+                        <select class="form-control" style="width: 200px; display: inline-block; background:whitesmoke;">
+                            <option value="-99">请选择</option>
+                            <option value="">1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                            <option value="">4</option>
+                        </select>
+                    </div>
+                    <div style="display:inline;margin-left: 50px;">
+                        <button class="btn btn-danger" type="button" style="width:120px; border-radius: 30px;" id="btnSearch">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="part2" style="margin:0 auto " >
+        <div id="form" class="navbar navbar-default" style="margin-top: -20px; background: white; border: none; border-radius: unset;">
+            <div style="width: 1125px; padding: 15px;  margin: 5px 10px 25px 10px;">
+                <div id="action" style="margin-top: -25px;">
+                    <a href="#" data-toggle="modal" data-target="#myModal"><div id="add" class="icon-plus" style="color: red;"></div> 新建</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-edit" style="color: red;"></div> 修改</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-trash" style="color: red;"></div> 删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#"><div class="icon-refresh" style="color: red;"></div> 刷新</a>
+                </div>
+                <!--弹出新增模态框-->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="width: 800px;">
+                        <div class="modal-content">
+                            <div class="modal-header"  style="background: indianred; color: white;">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white; opacity: unset;">×</button>
+                                <h4 class="modal-title">新增联系人</h4>
+                            </div>
+                            <div class="modal-body" style="margin: 15px auto; text-align: center;">
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;姓名：<input id="name" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入姓名"></div>
+                                <div>所属单位：<input id="depart" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入所属单位"></div>
+                                <div>联系方式：<input id="phone" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入联系方式"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;职位：<input id="job" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入职位"></div>
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;邮箱：<input id="E-mail" type="text" style="border:1px solid lightgrey; border-radius: 5px; width: 50%; margin-bottom: 20px; height: 30px;" placeholder="请输入邮箱"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger">确定</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" style="background: darkgrey; color: white;">取消</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+                <div class="fixed-table-container" style="padding-bottom: 0px;">
+                    <div class="fixed-table-body">
+                        <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                        <table id="table1" data-toolbar="#toolbar" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="false" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;" class="table-hover">
+                            <thead style="background: whitesmoke;">
+                            <tr>
+                                <th style="text-align: center;width: 70px;" data-field="name" tabindex="0">
+                                    <div class="th-inner">序号</div>
+                                </th>
+                                <th style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner">姓名</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">职业</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">岗位</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="performance" tabindex="0">
+                                    <div class="th-inner">联系电话</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                                <th style="text-align: center;" data-field="performance" tabindex="0">
+                                    <div class="th-inner">电子邮箱</div>
+                                    <div class="fht-cell"></div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody style="" id="addressbookContain">
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="fixed-table-footer" style="display: block;float: right">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li>
+                                    <a href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li><a href="#">1</a></li>
+                                <li><a href="#">2</a></li>
+                                <li><a href="#">3</a></li>
+                                <li><a href="#">4</a></li>
+                                <li><a href="#">5</a></li>
+                                <li>
+                                    <a href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="fixed-table-footer" style="display: none;float: right;">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li>
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">5</a></li>
+                            <li>
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ractive" id='addressbookTemplate'>
+                            {{#if data}}
+                            {{#each data:i}}
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable">{{i+1}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data[i].name}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data[i].occupation}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data[i].position}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data[i].phoneNumber}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner sortable ">{{data[i].mail}}</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            {{/each}}
+                            {{/if}}
+</script>
+<script>
+    var h_app = function() {
+        var CjwtxzRactive;
+        function renderView() {
+            CjwtxzRactive = new Ractive({
+                el : "#addressbookContain",
+                template : "#addressbookTemplate",
+                onrender : function() {
+                },
+                oncomplete : function() {
+                    var param = {
+                        "page":1,
+                        "pageSize":1
+                    }
+                    $.ajax({
+                        type : "post",
+                        url : Constants.path+"phoneBook/getBook",
+                        data : JSON.stringify(param),
+                        dataType : "json",
+                        contentType : "application/json",
+                        success : function(data) {
+                            console.log(data);
+                            CjwtxzRactive.set("data",data.data)
+                        }
+                    })
+                }
+            });
+        };
+
+        return {
+            init : function() {
+                renderView();
+            }
+        };
+    }();
+    $(document).ready(h_app.init);
+</script>
+</body>
+</html>

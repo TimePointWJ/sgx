@@ -1,0 +1,21 @@
+body{
+    width: 1150px;
+    margin: 0 auto;
+    background: whitesmoke;
+    box-shadow:1px 1px 1px 1px darkgrey;
+}
+#part1 a{
+    color: red;
+}
+#part3 a{
+    color: red;
+}
+table{
+    border-radius: unset;
+}
+#table1 tr{
+    border-bottom:2px solid whitesmoke;
+}
+#table2 tr{
+     border-bottom:2px solid whitesmoke;
+ }

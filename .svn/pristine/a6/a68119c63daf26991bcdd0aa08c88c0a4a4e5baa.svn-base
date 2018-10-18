@@ -1,0 +1,36 @@
+body{
+    width: 1150px;
+    margin: 0 auto;
+    background: whitesmoke;
+    box-shadow:1px 1px 1px 1px darkgrey;
+}
+#part1 a{
+    color: red;
+}
+#part3 a{
+    color: red;
+}
+#form button{
+    margin-left: 15px;
+}
+#part2 a{
+    text-align: center;
+    width: 170px;
+    border-radius: unset;
+    line-height: 37px;
+}
+#part4 a{
+    text-align: center;
+    width: 170px;
+    border-radius: unset;
+    line-height: 37px;
+}
+table{
+    border-radius: unset;
+}
+#table1 tr{
+    border-bottom:2px solid whitesmoke;
+}
+#table2 tr{
+     border-bottom:2px solid whitesmoke;
+ }

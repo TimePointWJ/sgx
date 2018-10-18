@@ -1,0 +1,47 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid",
+      "type": "com.jtzh.common.config.DruidProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.initial-size",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.max-active",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.min-idle",
+      "type": "java.lang.Integer"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.username",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.jtzh.common.config.DruidProperties",
+      "name": "druid.validation-query",
+      "type": "java.lang.String"
+    }
+  ]
+}

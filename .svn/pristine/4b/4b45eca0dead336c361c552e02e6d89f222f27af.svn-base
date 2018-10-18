@@ -1,0 +1,154 @@
+package com.jtzh.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.common.base.BaseService;
+import com.jtzh.common.page.Page;
+import com.jtzh.entity.UnionBuild;
+import com.jtzh.entity.UnionBuildTeam;
+import com.jtzh.entity.UnionCandidate;
+import com.jtzh.entity.UnionCandidateInfo;
+import com.jtzh.entity.UnionResult;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.mapper.UnionBuildMapper;
+import com.jtzh.mapper.UnionBuildTeamMapper;
+import com.jtzh.mapper.UnionCandidateInfoMapper;
+import com.jtzh.mapper.UnionCandidateMapper;
+import com.jtzh.mapper.UnionResultMapper;
+import com.jtzh.pojo.BuildParam;
+import com.jtzh.pojo.CandidateParam;
+import com.jtzh.pojo.UnionParam;
+
+@Service("unionService")
+public class UnionServiceImpl extends BaseService implements UnionService {
+	protected static final org.slf4j.Logger logger = LoggerFactory.getLogger(UnionService.class);
+	@Resource
+	private UnionBuildMapper unionBuildMapper;
+	@Resource
+	private UnionBuildTeamMapper unionBuildTeamMapper;
+	@Resource
+	private UnionCandidateMapper unionCandidateMapper;
+	@Resource
+	private UnionCandidateInfoMapper unionCandidateInfoMapper;
+	@Resource
+	private UnionResultMapper unionResultMapper;
+	@Override
+	public Object getUnion(UnionUser user,UnionParam param) {
+		Page page = setparam(user, param);
+		int total = unionBuildMapper.getUnionTotal(page);
+		if(total>0) {
+			List<UnionBuild> ubList = unionBuildMapper.getUnion(page);
+			page.setTotal(total);
+			page.setData(ubList);
+		}
+		return page;
+	}
+	@Override
+	public Object getUnionInfo(String id) {
+		UnionBuild build = unionBuildMapper.getUnionByid(id);//申请主体信息
+		List<UnionBuildTeam> team = unionBuildTeamMapper.selectBuildTeam("1", id);//筹备组信息
+		UnionCandidate  candidate = unionCandidateMapper.selectCandidate("01", id);//候选人信息-主体信息
+		
+		//候选人信息：01-工会委员会，02-工会经费审查委员会，03-工会女职工委员会，04-工会劳动法律监察委员会
+		List<UnionCandidateInfo> unioninfo = null;
+		List<UnionCandidateInfo> unionpayinfo = null;
+		if(candidate != null) {
+			unioninfo = unionCandidateInfoMapper.selectCandidateInfo("01",candidate.getId());
+			unionpayinfo = unionCandidateInfoMapper.selectCandidateInfo("02",candidate.getId());
+			
+		}
+		CandidateParam c = new CandidateParam();
+		c.setCandidate(candidate);
+		c.setUnioninfo(unioninfo);
+		c.setUnionpayinfo(unionpayinfo);
+		//审核流程结果
+		List<UnionResult> result = unionResultMapper.selectResult("01", id);
+		
+		BuildParam b = new BuildParam();
+		b.setCandidate(c);
+		b.setBuild(build);
+		b.setTeam(team);
+		b.setResult(result);
+		ResultObject res = new ResultObject();
+		res.setObj(b);
+		return res;
+	}
+	@Transactional
+	@Override
+	public Object insertUnion(UnionUser user, BuildParam param) {
+		if(StringUtils.isNotBlank(param.getId())) {
+			unionBuildMapper.updateDeflag(param.getId());
+		}
+		logger.info("主体信息开始-------------------------------------------------------");
+		UnionBuild build = param.getBuild();//主体信息
+		build.setCraterName(user.getUserName());
+		build.setCreateId(user.getLoginId());
+		build.setCreateTime(new Date());
+		build.setDelflag("A");
+		unionBuildMapper.insertUnion(build);
+		logger.info("主体信息结束-------------------------------------------------------");
+		
+		logger.info("筹备人员信息开始-------------------------------------------------------");
+		List<UnionBuildTeam> teams = param.getTeam();//筹备组
+		List<UnionBuildTeam> insertTeams = new ArrayList<UnionBuildTeam>();
+		for(UnionBuildTeam team : teams) {
+			team.setSourceId(build.getId());
+			team.setSource("1");
+			team.setCreateName(user.getUserName());
+			team.setCreateId(user.getLoginId());
+			team.setCreateTime(new Date());
+			team.setDelflag("A");
+			insertTeams.add(team);
+			unionBuildTeamMapper.insert(insertTeams);
+		}
+		logger.info("筹备人员信息结束-------------------------------------------------------");
+		
+		logger.info("候选人信息主体开始-------------------------------------------------------");
+		UnionCandidate c = param.getCandidate().getCandidate();//候选人主体信息
+		c.setCreateName(user.getUserName());
+		c.setCreateId(user.getLoginId());
+		c.setCreateTime(new Date());
+		c.setDelflag("A");
+		c.setSource("01");
+		c.setSourceId(build.getId());
+		unionCandidateMapper.insert(c);
+		logger.info("候选人信息主体结束-------------------------------------------------------");
+		
+		
+		logger.info("各候选人信息开始-------------------------------------------------------");
+		List<UnionCandidateInfo> info1 = param.getCandidate().getUnioninfo();//工会委员
+		List<UnionCandidateInfo> info2 = param.getCandidate().getUnionpayinfo();//经费审查委员会
+		List<UnionCandidateInfo> infos = new ArrayList<UnionCandidateInfo>();
+		for(UnionCandidateInfo i : info1) {
+			i.setCreateId(user.getLoginId());
+			i.setDelflag("A");
+			i.setSource("01");
+			i.setSourceId(c.getId());
+			infos.add(i);
+		}
+		for(UnionCandidateInfo i : info2) {
+			i.setCreateId(user.getLoginId());
+			i.setDelflag("A");
+			i.setSource("02");
+			i.setSourceId(c.getId());
+			infos.add(i);
+		}
+		unionCandidateInfoMapper.insert(infos);
+		return new ResultObject();
+	}
+	@Override
+	public Object removeUnion(String id) {
+		return unionBuildMapper.updateDeflag(id);
+	}
+
+}

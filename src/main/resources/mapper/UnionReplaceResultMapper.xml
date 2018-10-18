@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionReplaceResultMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionReplaceResult">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="com_name" jdbcType="VARCHAR" property="comName" />
+    <result column="higher_union" jdbcType="VARCHAR" property="higherUnion" />
+    <result column="higher_union_id" jdbcType="INTEGER" property="higherUnionId" />
+    <result column="year" jdbcType="CHAR" property="year" />
+    <result column="mouth" jdbcType="CHAR" property="mouth" />
+    <result column="day" jdbcType="CHAR" property="day" />
+    <result column="should_come_num" jdbcType="INTEGER" property="shouldComeNum" />
+    <result column="come_num" jdbcType="INTEGER" property="comeNum" />
+    <result column="one_committee_team" jdbcType="VARCHAR" property="oneCommitteeTeam" />
+    <result column="one_committee_num" jdbcType="INTEGER" property="oneCommitteeNum" />
+    <result column="one_pay_team" jdbcType="VARCHAR" property="onePayTeam" />
+    <result column="one_pay_num" jdbcType="INTEGER" property="onePayNum" />
+    <result column="two_year" jdbcType="CHAR" property="twoYear" />
+    <result column="three_year" jdbcType="CHAR" property="threeYear" />
+    <result column="four_year" jdbcType="CHAR" property="fourYear" />
+    <result column="five_year" jdbcType="CHAR" property="fiveYear" />
+    <result column="tow_mouth" jdbcType="CHAR" property="towMouth" />
+    <result column="three_mouth" jdbcType="CHAR" property="threeMouth" />
+    <result column="four_mouth" jdbcType="CHAR" property="fourMouth" />
+    <result column="five_mouth" jdbcType="CHAR" property="fiveMouth" />
+    <result column="tow_day" jdbcType="CHAR" property="towDay" />
+    <result column="three_day" jdbcType="CHAR" property="threeDay" />
+    <result column="four_day" jdbcType="CHAR" property="fourDay" />
+    <result column="five_day" jdbcType="CHAR" property="fiveDay" />
+    <result column="two_seesion" jdbcType="INTEGER" property="twoSeesion" />
+    <result column="three_seesion" jdbcType="INTEGER" property="threeSeesion" />
+    <result column="four_seesion" jdbcType="INTEGER" property="fourSeesion" />
+    <result column="two_should_come_num" jdbcType="INTEGER" property="twoShouldComeNum" />
+    <result column="two_come_num" jdbcType="INTEGER" property="twoComeNum" />
+    <result column="two_leader" jdbcType="VARCHAR" property="twoLeader" />
+    <result column="two_deputy_leader" jdbcType="VARCHAR" property="twoDeputyLeader" />
+    <result column="three_should_come_num" jdbcType="INTEGER" property="threeShouldComeNum" />
+    <result column="three_come_num" jdbcType="INTEGER" property="threeComeNum" />
+    <result column="three_leader" jdbcType="VARCHAR" property="threeLeader" />
+    <result column="three_deputy_leader" jdbcType="VARCHAR" property="threeDeputyLeader" />
+    <result column="four_wemon_team" jdbcType="VARCHAR" property="fourWemonTeam" />
+    <result column="four_wemon_num" jdbcType="INTEGER" property="fourWemonNum" />
+    <result column="four_leader" jdbcType="VARCHAR" property="fourLeader" />
+    <result column="five_law_team" jdbcType="VARCHAR" property="fiveLawTeam" />
+    <result column="five_law_num" jdbcType="INTEGER" property="fiveLawNum" />
+    <result column="five_leader" jdbcType="VARCHAR" property="fiveLeader" />
+    <result column="apply_year" jdbcType="CHAR" property="applyYear" />
+    <result column="apply_mouth" jdbcType="CHAR" property="applyMouth" />
+    <result column="apply_day" jdbcType="CHAR" property="applyDay" />
+    <result column="processing_state" jdbcType="CHAR" property="processingState" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, type, com_name, higher_union, higher_union_id, year, mouth, day, should_come_num, 
+    come_num, one_committee_team, one_committee_num, one_pay_team, one_pay_num, two_year, 
+    three_year, four_year, five_year, tow_mouth, three_mouth, four_mouth, five_mouth, 
+    tow_day, three_day, four_day, five_day, two_seesion, three_seesion, four_seesion, 
+    two_should_come_num, two_come_num, two_leader, two_deputy_leader, three_should_come_num, 
+    three_come_num, three_leader, three_deputy_leader, four_wemon_team, four_wemon_num, 
+    four_leader, five_law_team, five_law_num, five_leader, apply_year, apply_mouth, apply_day, 
+    processing_state, create_id, create_name, create_time, delflag
+  </sql>
+  
+  <select id="selectReplaceResult" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_replace_result
+    where delflag <![CDATA[<>]]> 'D' and type = #{page.param.type}
+     <if test="page.param.unionId != null and page.param.unionId != ''">
+    	and create_id = #{page.param.unionId}
+     </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+     order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+    <select id="selectReplaceResultTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+    select count(1)
+    from union_replace_result
+    where delflag <![CDATA[<>]]> 'D' and type = #{page.param.type}
+     <if test="page.param.unionId != null and page.param.unionId != ''">
+    	and create_id = #{page.param.unionId}
+     </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	 processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+  </select>
+  
+    <update id="updateState">
+    update union_replace_result
+    set 
+      processing_state = #{processingState,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectInfo" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_replace_result
+    where id = #{id,jdbcType=INTEGER} and delflag !='D'
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_replace_result
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jtzh.entity.UnionReplaceResult">
+    insert into union_replace_result (id, type, com_name, 
+      higher_union, higher_union_id, year, 
+      mouth, day, should_come_num, 
+      come_num, one_committee_team, one_committee_num, 
+      one_pay_team, one_pay_num, two_year, 
+      three_year, four_year, five_year, 
+      tow_mouth, three_mouth, four_mouth, 
+      five_mouth, tow_day, three_day, 
+      four_day, five_day, two_seesion, 
+      three_seesion, four_seesion, two_should_come_num, 
+      two_come_num, two_leader, two_deputy_leader, 
+      three_should_come_num, three_come_num, three_leader, 
+      three_deputy_leader, four_wemon_team, four_wemon_num, 
+      four_leader, five_law_team, five_law_num, 
+      five_leader, apply_year, apply_mouth, 
+      apply_day, processing_state, create_id, 
+      create_name, create_time, delflag
+      )
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=CHAR}, #{comName,jdbcType=VARCHAR}, 
+      #{higherUnion,jdbcType=VARCHAR}, #{higherUnionId,jdbcType=INTEGER}, #{year,jdbcType=CHAR}, 
+      #{mouth,jdbcType=CHAR}, #{day,jdbcType=CHAR}, #{shouldComeNum,jdbcType=INTEGER}, 
+      #{comeNum,jdbcType=INTEGER}, #{oneCommitteeTeam,jdbcType=VARCHAR}, #{oneCommitteeNum,jdbcType=INTEGER}, 
+      #{onePayTeam,jdbcType=VARCHAR}, #{onePayNum,jdbcType=INTEGER}, #{twoYear,jdbcType=CHAR}, 
+      #{threeYear,jdbcType=CHAR}, #{fourYear,jdbcType=CHAR}, #{fiveYear,jdbcType=CHAR}, 
+      #{towMouth,jdbcType=CHAR}, #{threeMouth,jdbcType=CHAR}, #{fourMouth,jdbcType=CHAR}, 
+      #{fiveMouth,jdbcType=CHAR}, #{towDay,jdbcType=CHAR}, #{threeDay,jdbcType=CHAR}, 
+      #{fourDay,jdbcType=CHAR}, #{fiveDay,jdbcType=CHAR}, #{twoSeesion,jdbcType=INTEGER}, 
+      #{threeSeesion,jdbcType=INTEGER}, #{fourSeesion,jdbcType=INTEGER}, #{twoShouldComeNum,jdbcType=INTEGER}, 
+      #{twoComeNum,jdbcType=INTEGER}, #{twoLeader,jdbcType=VARCHAR}, #{twoDeputyLeader,jdbcType=VARCHAR}, 
+      #{threeShouldComeNum,jdbcType=INTEGER}, #{threeComeNum,jdbcType=INTEGER}, #{threeLeader,jdbcType=VARCHAR}, 
+      #{threeDeputyLeader,jdbcType=VARCHAR}, #{fourWemonTeam,jdbcType=VARCHAR}, #{fourWemonNum,jdbcType=INTEGER}, 
+      #{fourLeader,jdbcType=VARCHAR}, #{fiveLawTeam,jdbcType=VARCHAR}, #{fiveLawNum,jdbcType=INTEGER}, 
+      #{fiveLeader,jdbcType=VARCHAR}, #{applyYear,jdbcType=CHAR}, #{applyMouth,jdbcType=CHAR}, 
+      #{applyDay,jdbcType=CHAR}, #{processingState,jdbcType=CHAR}, #{createId,jdbcType=INTEGER}, 
+      #{createName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionReplaceResult">
+    insert into union_replace_result
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="comName != null">
+        com_name,
+      </if>
+      <if test="higherUnion != null">
+        higher_union,
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id,
+      </if>
+      <if test="year != null">
+        year,
+      </if>
+      <if test="mouth != null">
+        mouth,
+      </if>
+      <if test="day != null">
+        day,
+      </if>
+      <if test="shouldComeNum != null">
+        should_come_num,
+      </if>
+      <if test="comeNum != null">
+        come_num,
+      </if>
+      <if test="oneCommitteeTeam != null">
+        one_committee_team,
+      </if>
+      <if test="oneCommitteeNum != null">
+        one_committee_num,
+      </if>
+      <if test="onePayTeam != null">
+        one_pay_team,
+      </if>
+      <if test="onePayNum != null">
+        one_pay_num,
+      </if>
+      <if test="twoYear != null">
+        two_year,
+      </if>
+      <if test="threeYear != null">
+        three_year,
+      </if>
+      <if test="fourYear != null">
+        four_year,
+      </if>
+      <if test="fiveYear != null">
+        five_year,
+      </if>
+      <if test="towMouth != null">
+        tow_mouth,
+      </if>
+      <if test="threeMouth != null">
+        three_mouth,
+      </if>
+      <if test="fourMouth != null">
+        four_mouth,
+      </if>
+      <if test="fiveMouth != null">
+        five_mouth,
+      </if>
+      <if test="towDay != null">
+        tow_day,
+      </if>
+      <if test="threeDay != null">
+        three_day,
+      </if>
+      <if test="fourDay != null">
+        four_day,
+      </if>
+      <if test="fiveDay != null">
+        five_day,
+      </if>
+      <if test="twoSeesion != null">
+        two_seesion,
+      </if>
+      <if test="threeSeesion != null">
+        three_seesion,
+      </if>
+      <if test="fourSeesion != null">
+        four_seesion,
+      </if>
+      <if test="twoShouldComeNum != null">
+        two_should_come_num,
+      </if>
+      <if test="twoComeNum != null">
+        two_come_num,
+      </if>
+      <if test="twoLeader != null">
+        two_leader,
+      </if>
+      <if test="twoDeputyLeader != null">
+        two_deputy_leader,
+      </if>
+      <if test="threeShouldComeNum != null">
+        three_should_come_num,
+      </if>
+      <if test="threeComeNum != null">
+        three_come_num,
+      </if>
+      <if test="threeLeader != null">
+        three_leader,
+      </if>
+      <if test="threeDeputyLeader != null">
+        three_deputy_leader,
+      </if>
+      <if test="fourWemonTeam != null">
+        four_wemon_team,
+      </if>
+      <if test="fourWemonNum != null">
+        four_wemon_num,
+      </if>
+      <if test="fourLeader != null">
+        four_leader,
+      </if>
+      <if test="fiveLawTeam != null">
+        five_law_team,
+      </if>
+      <if test="fiveLawNum != null">
+        five_law_num,
+      </if>
+      <if test="fiveLeader != null">
+        five_leader,
+      </if>
+      <if test="applyYear != null">
+        apply_year,
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth,
+      </if>
+      <if test="applyDay != null">
+        apply_day,
+      </if>
+      <if test="processingState != null">
+        processing_state,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="comName != null">
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnion != null">
+        #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        #{day,jdbcType=CHAR},
+      </if>
+      <if test="shouldComeNum != null">
+        #{shouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="comeNum != null">
+        #{comeNum,jdbcType=INTEGER},
+      </if>
+      <if test="oneCommitteeTeam != null">
+        #{oneCommitteeTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="oneCommitteeNum != null">
+        #{oneCommitteeNum,jdbcType=INTEGER},
+      </if>
+      <if test="onePayTeam != null">
+        #{onePayTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="onePayNum != null">
+        #{onePayNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoYear != null">
+        #{twoYear,jdbcType=CHAR},
+      </if>
+      <if test="threeYear != null">
+        #{threeYear,jdbcType=CHAR},
+      </if>
+      <if test="fourYear != null">
+        #{fourYear,jdbcType=CHAR},
+      </if>
+      <if test="fiveYear != null">
+        #{fiveYear,jdbcType=CHAR},
+      </if>
+      <if test="towMouth != null">
+        #{towMouth,jdbcType=CHAR},
+      </if>
+      <if test="threeMouth != null">
+        #{threeMouth,jdbcType=CHAR},
+      </if>
+      <if test="fourMouth != null">
+        #{fourMouth,jdbcType=CHAR},
+      </if>
+      <if test="fiveMouth != null">
+        #{fiveMouth,jdbcType=CHAR},
+      </if>
+      <if test="towDay != null">
+        #{towDay,jdbcType=CHAR},
+      </if>
+      <if test="threeDay != null">
+        #{threeDay,jdbcType=CHAR},
+      </if>
+      <if test="fourDay != null">
+        #{fourDay,jdbcType=CHAR},
+      </if>
+      <if test="fiveDay != null">
+        #{fiveDay,jdbcType=CHAR},
+      </if>
+      <if test="twoSeesion != null">
+        #{twoSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="threeSeesion != null">
+        #{threeSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="fourSeesion != null">
+        #{fourSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="twoShouldComeNum != null">
+        #{twoShouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoComeNum != null">
+        #{twoComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoLeader != null">
+        #{twoLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="twoDeputyLeader != null">
+        #{twoDeputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="threeShouldComeNum != null">
+        #{threeShouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="threeComeNum != null">
+        #{threeComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="threeLeader != null">
+        #{threeLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="threeDeputyLeader != null">
+        #{threeDeputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="fourWemonTeam != null">
+        #{fourWemonTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="fourWemonNum != null">
+        #{fourWemonNum,jdbcType=INTEGER},
+      </if>
+      <if test="fourLeader != null">
+        #{fourLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="fiveLawTeam != null">
+        #{fiveLawTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="fiveLawNum != null">
+        #{fiveLawNum,jdbcType=INTEGER},
+      </if>
+      <if test="fiveLeader != null">
+        #{fiveLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="applyYear != null">
+        #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="processingState != null">
+        #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionReplaceResult">
+    update union_replace_result
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="comName != null">
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnion != null">
+        higher_union = #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        year = #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        mouth = #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="day != null">
+        day = #{day,jdbcType=CHAR},
+      </if>
+      <if test="shouldComeNum != null">
+        should_come_num = #{shouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="comeNum != null">
+        come_num = #{comeNum,jdbcType=INTEGER},
+      </if>
+      <if test="oneCommitteeTeam != null">
+        one_committee_team = #{oneCommitteeTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="oneCommitteeNum != null">
+        one_committee_num = #{oneCommitteeNum,jdbcType=INTEGER},
+      </if>
+      <if test="onePayTeam != null">
+        one_pay_team = #{onePayTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="onePayNum != null">
+        one_pay_num = #{onePayNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoYear != null">
+        two_year = #{twoYear,jdbcType=CHAR},
+      </if>
+      <if test="threeYear != null">
+        three_year = #{threeYear,jdbcType=CHAR},
+      </if>
+      <if test="fourYear != null">
+        four_year = #{fourYear,jdbcType=CHAR},
+      </if>
+      <if test="fiveYear != null">
+        five_year = #{fiveYear,jdbcType=CHAR},
+      </if>
+      <if test="towMouth != null">
+        tow_mouth = #{towMouth,jdbcType=CHAR},
+      </if>
+      <if test="threeMouth != null">
+        three_mouth = #{threeMouth,jdbcType=CHAR},
+      </if>
+      <if test="fourMouth != null">
+        four_mouth = #{fourMouth,jdbcType=CHAR},
+      </if>
+      <if test="fiveMouth != null">
+        five_mouth = #{fiveMouth,jdbcType=CHAR},
+      </if>
+      <if test="towDay != null">
+        tow_day = #{towDay,jdbcType=CHAR},
+      </if>
+      <if test="threeDay != null">
+        three_day = #{threeDay,jdbcType=CHAR},
+      </if>
+      <if test="fourDay != null">
+        four_day = #{fourDay,jdbcType=CHAR},
+      </if>
+      <if test="fiveDay != null">
+        five_day = #{fiveDay,jdbcType=CHAR},
+      </if>
+      <if test="twoSeesion != null">
+        two_seesion = #{twoSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="threeSeesion != null">
+        three_seesion = #{threeSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="fourSeesion != null">
+        four_seesion = #{fourSeesion,jdbcType=INTEGER},
+      </if>
+      <if test="twoShouldComeNum != null">
+        two_should_come_num = #{twoShouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoComeNum != null">
+        two_come_num = #{twoComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="twoLeader != null">
+        two_leader = #{twoLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="twoDeputyLeader != null">
+        two_deputy_leader = #{twoDeputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="threeShouldComeNum != null">
+        three_should_come_num = #{threeShouldComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="threeComeNum != null">
+        three_come_num = #{threeComeNum,jdbcType=INTEGER},
+      </if>
+      <if test="threeLeader != null">
+        three_leader = #{threeLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="threeDeputyLeader != null">
+        three_deputy_leader = #{threeDeputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="fourWemonTeam != null">
+        four_wemon_team = #{fourWemonTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="fourWemonNum != null">
+        four_wemon_num = #{fourWemonNum,jdbcType=INTEGER},
+      </if>
+      <if test="fourLeader != null">
+        four_leader = #{fourLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="fiveLawTeam != null">
+        five_law_team = #{fiveLawTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="fiveLawNum != null">
+        five_law_num = #{fiveLawNum,jdbcType=INTEGER},
+      </if>
+      <if test="fiveLeader != null">
+        five_leader = #{fiveLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="applyYear != null">
+        apply_year = #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth = #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        apply_day = #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="processingState != null">
+        processing_state = #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionReplaceResult">
+    update union_replace_result
+    set type = #{type,jdbcType=CHAR},
+      com_name = #{comName,jdbcType=VARCHAR},
+      higher_union = #{higherUnion,jdbcType=VARCHAR},
+      higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      year = #{year,jdbcType=CHAR},
+      mouth = #{mouth,jdbcType=CHAR},
+      day = #{day,jdbcType=CHAR},
+      should_come_num = #{shouldComeNum,jdbcType=INTEGER},
+      come_num = #{comeNum,jdbcType=INTEGER},
+      one_committee_team = #{oneCommitteeTeam,jdbcType=VARCHAR},
+      one_committee_num = #{oneCommitteeNum,jdbcType=INTEGER},
+      one_pay_team = #{onePayTeam,jdbcType=VARCHAR},
+      one_pay_num = #{onePayNum,jdbcType=INTEGER},
+      two_year = #{twoYear,jdbcType=CHAR},
+      three_year = #{threeYear,jdbcType=CHAR},
+      four_year = #{fourYear,jdbcType=CHAR},
+      five_year = #{fiveYear,jdbcType=CHAR},
+      tow_mouth = #{towMouth,jdbcType=CHAR},
+      three_mouth = #{threeMouth,jdbcType=CHAR},
+      four_mouth = #{fourMouth,jdbcType=CHAR},
+      five_mouth = #{fiveMouth,jdbcType=CHAR},
+      tow_day = #{towDay,jdbcType=CHAR},
+      three_day = #{threeDay,jdbcType=CHAR},
+      four_day = #{fourDay,jdbcType=CHAR},
+      five_day = #{fiveDay,jdbcType=CHAR},
+      two_seesion = #{twoSeesion,jdbcType=INTEGER},
+      three_seesion = #{threeSeesion,jdbcType=INTEGER},
+      four_seesion = #{fourSeesion,jdbcType=INTEGER},
+      two_should_come_num = #{twoShouldComeNum,jdbcType=INTEGER},
+      two_come_num = #{twoComeNum,jdbcType=INTEGER},
+      two_leader = #{twoLeader,jdbcType=VARCHAR},
+      two_deputy_leader = #{twoDeputyLeader,jdbcType=VARCHAR},
+      three_should_come_num = #{threeShouldComeNum,jdbcType=INTEGER},
+      three_come_num = #{threeComeNum,jdbcType=INTEGER},
+      three_leader = #{threeLeader,jdbcType=VARCHAR},
+      three_deputy_leader = #{threeDeputyLeader,jdbcType=VARCHAR},
+      four_wemon_team = #{fourWemonTeam,jdbcType=VARCHAR},
+      four_wemon_num = #{fourWemonNum,jdbcType=INTEGER},
+      four_leader = #{fourLeader,jdbcType=VARCHAR},
+      five_law_team = #{fiveLawTeam,jdbcType=VARCHAR},
+      five_law_num = #{fiveLawNum,jdbcType=INTEGER},
+      five_leader = #{fiveLeader,jdbcType=VARCHAR},
+      apply_year = #{applyYear,jdbcType=CHAR},
+      apply_mouth = #{applyMouth,jdbcType=CHAR},
+      apply_day = #{applyDay,jdbcType=CHAR},
+      processing_state = #{processingState,jdbcType=CHAR},
+      create_id = #{createId,jdbcType=INTEGER},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

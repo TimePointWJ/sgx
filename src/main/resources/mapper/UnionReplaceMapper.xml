@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionReplaceMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionReplace">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="processing_state" jdbcType="CHAR" property="processingState" />
+    <result column="com_name" jdbcType="VARCHAR" property="comName" />
+    <result column="number" jdbcType="INTEGER" property="number" />
+    <result column="higher_union" jdbcType="VARCHAR" property="higherUnion" />
+    <result column="higher_union_id" jdbcType="INTEGER" property="higherUnionId" />
+    <result column="year" jdbcType="CHAR" property="year" />
+    <result column="mouth" jdbcType="CHAR" property="mouth" />
+    <result column="year_will" jdbcType="CHAR" property="yearWill" />
+    <result column="mouth_will" jdbcType="CHAR" property="mouthWill" />
+    <result column="union_number" jdbcType="INTEGER" property="unionNumber" />
+    <result column="attend_union_number" jdbcType="INTEGER" property="attendUnionNumber" />
+    <result column="attend_union_p" jdbcType="DOUBLE" property="attendUnionP" />
+    <result column="worker_number" jdbcType="INTEGER" property="workerNumber" />
+    <result column="worker_p" jdbcType="DOUBLE" property="workerP" />
+    <result column="activist_number" jdbcType="INTEGER" property="activistNumber" />
+    <result column="activist_p" jdbcType="DOUBLE" property="activistP" />
+    <result column="models_number" jdbcType="INTEGER" property="modelsNumber" />
+    <result column="models_p" jdbcType="DOUBLE" property="modelsP" />
+    <result column="manage_number" jdbcType="INTEGER" property="manageNumber" />
+    <result column="manage_p" jdbcType="DOUBLE" property="manageP" />
+    <result column="frontline_num" jdbcType="INTEGER" property="frontlineNum" />
+    <result column="frontline_p" jdbcType="DOUBLE" property="frontlineP" />
+    <result column="wemon_num" jdbcType="INTEGER" property="wemonNum" />
+    <result column="wemon_p" jdbcType="DOUBLE" property="wemonP" />
+    <result column="youth_num" jdbcType="INTEGER" property="youthNum" />
+    <result column="youth_p" jdbcType="DOUBLE" property="youthP" />
+    <result column="committee_num" jdbcType="INTEGER" property="committeeNum" />
+    <result column="deputy_leader_num" jdbcType="INTEGER" property="deputyLeaderNum" />
+    <result column="pay_num" jdbcType="INTEGER" property="payNum" />
+    <result column="apply_year" jdbcType="CHAR" property="applyYear" />
+    <result column="apply_mouth" jdbcType="CHAR" property="applyMouth" />
+    <result column="apply_day" jdbcType="CHAR" property="applyDay" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, processing_state, com_name, number, higher_union, higher_union_id, year, mouth, 
+    year_will, mouth_will, union_number, attend_union_number, attend_union_p, worker_number, 
+    worker_p, activist_number, activist_p, models_number, models_p, manage_number, manage_p, 
+    frontline_num, frontline_p, wemon_num, wemon_p, youth_num, youth_p, committee_num, 
+    deputy_leader_num, pay_num, apply_year, apply_mouth, apply_day, create_name,create_id, create_time, 
+    delflag
+  </sql>
+  <select id="selectReplace" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_replace
+    where delflag <![CDATA[<>]]> 'D'
+         <if test="page.param.unionId != null and page.param.unionId != ''">
+    	and create_id = #{page.param.unionId}
+     </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+     order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+    <select id="selectTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+    select count(1)
+    from union_replace
+    where delflag <![CDATA[<>]]> 'D'
+     <if test="page.param.unionId != null and page.param.unionId != ''">
+    	and create_id = #{page.param.unionId}
+     </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	 processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+  </select>
+    <update id="updateState">
+    update union_replace
+    set 
+      processing_state = #{processingState,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <select id="selectReplaceInfo"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_replace
+    where delflag !='D' and id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from union_replace
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.jtzh.entity.UnionReplace">
+    insert into union_replace (id, processing_state, com_name, 
+      number, higher_union, higher_union_id, 
+      year, mouth, year_will, mouth_will, 
+      union_number, attend_union_number, attend_union_p, 
+      worker_number, worker_p, activist_number, 
+      activist_p, models_number, models_p, 
+      manage_number, manage_p, frontline_num, 
+      frontline_p, wemon_num, wemon_p, 
+      youth_num, youth_p, committee_num, 
+      deputy_leader_num, pay_num, apply_year, 
+      apply_mouth, apply_day, create_name, 
+      create_time, delflag)
+    values (#{id,jdbcType=INTEGER}, #{processingState,jdbcType=CHAR}, #{comName,jdbcType=VARCHAR}, 
+      #{number,jdbcType=INTEGER}, #{higherUnion,jdbcType=VARCHAR}, #{higherUnionId,jdbcType=INTEGER}, 
+      #{year,jdbcType=CHAR}, #{mouth,jdbcType=CHAR}, #{yearWill,jdbcType=CHAR}, #{mouthWill,jdbcType=CHAR}, 
+      #{unionNumber,jdbcType=INTEGER}, #{attendUnionNumber,jdbcType=INTEGER}, #{attendUnionP,jdbcType=DOUBLE}, 
+      #{workerNumber,jdbcType=INTEGER}, #{workerP,jdbcType=DOUBLE}, #{activistNumber,jdbcType=INTEGER}, 
+      #{activistP,jdbcType=DOUBLE}, #{modelsNumber,jdbcType=INTEGER}, #{modelsP,jdbcType=DOUBLE}, 
+      #{manageNumber,jdbcType=INTEGER}, #{manageP,jdbcType=DOUBLE}, #{frontlineNum,jdbcType=INTEGER}, 
+      #{frontlineP,jdbcType=DOUBLE}, #{wemonNum,jdbcType=INTEGER}, #{wemonP,jdbcType=DOUBLE}, 
+      #{youthNum,jdbcType=INTEGER}, #{youthP,jdbcType=DOUBLE}, #{committeeNum,jdbcType=INTEGER}, 
+      #{deputyLeaderNum,jdbcType=INTEGER}, #{payNum,jdbcType=INTEGER}, #{applyYear,jdbcType=CHAR}, 
+      #{applyMouth,jdbcType=CHAR}, #{applyDay,jdbcType=CHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionReplace">
+    insert into union_replace
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="processingState != null">
+        processing_state,
+      </if>
+      <if test="comName != null">
+        com_name,
+      </if>
+      <if test="number != null">
+        number,
+      </if>
+      <if test="higherUnion != null">
+        higher_union,
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id,
+      </if>
+      <if test="year != null">
+        year,
+      </if>
+      <if test="mouth != null">
+        mouth,
+      </if>
+      <if test="yearWill != null">
+        year_will,
+      </if>
+      <if test="mouthWill != null">
+        mouth_will,
+      </if>
+      <if test="unionNumber != null">
+        union_number,
+      </if>
+      <if test="attendUnionNumber != null">
+        attend_union_number,
+      </if>
+      <if test="attendUnionP != null">
+        attend_union_p,
+      </if>
+      <if test="workerNumber != null">
+        worker_number,
+      </if>
+      <if test="workerP != null">
+        worker_p,
+      </if>
+      <if test="activistNumber != null">
+        activist_number,
+      </if>
+      <if test="activistP != null">
+        activist_p,
+      </if>
+      <if test="modelsNumber != null">
+        models_number,
+      </if>
+      <if test="modelsP != null">
+        models_p,
+      </if>
+      <if test="manageNumber != null">
+        manage_number,
+      </if>
+      <if test="manageP != null">
+        manage_p,
+      </if>
+      <if test="frontlineNum != null">
+        frontline_num,
+      </if>
+      <if test="frontlineP != null">
+        frontline_p,
+      </if>
+      <if test="wemonNum != null">
+        wemon_num,
+      </if>
+      <if test="wemonP != null">
+        wemon_p,
+      </if>
+      <if test="youthNum != null">
+        youth_num,
+      </if>
+      <if test="youthP != null">
+        youth_p,
+      </if>
+      <if test="committeeNum != null">
+        committee_num,
+      </if>
+      <if test="deputyLeaderNum != null">
+        deputy_leader_num,
+      </if>
+      <if test="payNum != null">
+        pay_num,
+      </if>
+      <if test="applyYear != null">
+        apply_year,
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth,
+      </if>
+      <if test="applyDay != null">
+        apply_day,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="processingState != null">
+        #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="comName != null">
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        #{number,jdbcType=INTEGER},
+      </if>
+      <if test="higherUnion != null">
+        #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="yearWill != null">
+        #{yearWill,jdbcType=CHAR},
+      </if>
+      <if test="mouthWill != null">
+        #{mouthWill,jdbcType=CHAR},
+      </if>
+      <if test="unionNumber != null">
+        #{unionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="attendUnionNumber != null">
+        #{attendUnionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="attendUnionP != null">
+        #{attendUnionP,jdbcType=DOUBLE},
+      </if>
+      <if test="workerNumber != null">
+        #{workerNumber,jdbcType=INTEGER},
+      </if>
+      <if test="workerP != null">
+        #{workerP,jdbcType=DOUBLE},
+      </if>
+      <if test="activistNumber != null">
+        #{activistNumber,jdbcType=INTEGER},
+      </if>
+      <if test="activistP != null">
+        #{activistP,jdbcType=DOUBLE},
+      </if>
+      <if test="modelsNumber != null">
+        #{modelsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="modelsP != null">
+        #{modelsP,jdbcType=DOUBLE},
+      </if>
+      <if test="manageNumber != null">
+        #{manageNumber,jdbcType=INTEGER},
+      </if>
+      <if test="manageP != null">
+        #{manageP,jdbcType=DOUBLE},
+      </if>
+      <if test="frontlineNum != null">
+        #{frontlineNum,jdbcType=INTEGER},
+      </if>
+      <if test="frontlineP != null">
+        #{frontlineP,jdbcType=DOUBLE},
+      </if>
+      <if test="wemonNum != null">
+        #{wemonNum,jdbcType=INTEGER},
+      </if>
+      <if test="wemonP != null">
+        #{wemonP,jdbcType=DOUBLE},
+      </if>
+      <if test="youthNum != null">
+        #{youthNum,jdbcType=INTEGER},
+      </if>
+      <if test="youthP != null">
+        #{youthP,jdbcType=DOUBLE},
+      </if>
+      <if test="committeeNum != null">
+        #{committeeNum,jdbcType=INTEGER},
+      </if>
+      <if test="deputyLeaderNum != null">
+        #{deputyLeaderNum,jdbcType=INTEGER},
+      </if>
+      <if test="payNum != null">
+        #{payNum,jdbcType=INTEGER},
+      </if>
+      <if test="applyYear != null">
+        #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionReplace">
+    update union_replace
+    <set>
+      <if test="processingState != null">
+        processing_state = #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="comName != null">
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null">
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="higherUnion != null">
+        higher_union = #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="year != null">
+        year = #{year,jdbcType=CHAR},
+      </if>
+      <if test="mouth != null">
+        mouth = #{mouth,jdbcType=CHAR},
+      </if>
+      <if test="yearWill != null">
+        year_will = #{yearWill,jdbcType=CHAR},
+      </if>
+      <if test="mouthWill != null">
+        mouth_will = #{mouthWill,jdbcType=CHAR},
+      </if>
+      <if test="unionNumber != null">
+        union_number = #{unionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="attendUnionNumber != null">
+        attend_union_number = #{attendUnionNumber,jdbcType=INTEGER},
+      </if>
+      <if test="attendUnionP != null">
+        attend_union_p = #{attendUnionP,jdbcType=DOUBLE},
+      </if>
+      <if test="workerNumber != null">
+        worker_number = #{workerNumber,jdbcType=INTEGER},
+      </if>
+      <if test="workerP != null">
+        worker_p = #{workerP,jdbcType=DOUBLE},
+      </if>
+      <if test="activistNumber != null">
+        activist_number = #{activistNumber,jdbcType=INTEGER},
+      </if>
+      <if test="activistP != null">
+        activist_p = #{activistP,jdbcType=DOUBLE},
+      </if>
+      <if test="modelsNumber != null">
+        models_number = #{modelsNumber,jdbcType=INTEGER},
+      </if>
+      <if test="modelsP != null">
+        models_p = #{modelsP,jdbcType=DOUBLE},
+      </if>
+      <if test="manageNumber != null">
+        manage_number = #{manageNumber,jdbcType=INTEGER},
+      </if>
+      <if test="manageP != null">
+        manage_p = #{manageP,jdbcType=DOUBLE},
+      </if>
+      <if test="frontlineNum != null">
+        frontline_num = #{frontlineNum,jdbcType=INTEGER},
+      </if>
+      <if test="frontlineP != null">
+        frontline_p = #{frontlineP,jdbcType=DOUBLE},
+      </if>
+      <if test="wemonNum != null">
+        wemon_num = #{wemonNum,jdbcType=INTEGER},
+      </if>
+      <if test="wemonP != null">
+        wemon_p = #{wemonP,jdbcType=DOUBLE},
+      </if>
+      <if test="youthNum != null">
+        youth_num = #{youthNum,jdbcType=INTEGER},
+      </if>
+      <if test="youthP != null">
+        youth_p = #{youthP,jdbcType=DOUBLE},
+      </if>
+      <if test="committeeNum != null">
+        committee_num = #{committeeNum,jdbcType=INTEGER},
+      </if>
+      <if test="deputyLeaderNum != null">
+        deputy_leader_num = #{deputyLeaderNum,jdbcType=INTEGER},
+      </if>
+      <if test="payNum != null">
+        pay_num = #{payNum,jdbcType=INTEGER},
+      </if>
+      <if test="applyYear != null">
+        apply_year = #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth = #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        apply_day = #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionReplace">
+    update union_replace
+    set processing_state = #{processingState,jdbcType=CHAR},
+      com_name = #{comName,jdbcType=VARCHAR},
+      number = #{number,jdbcType=INTEGER},
+      higher_union = #{higherUnion,jdbcType=VARCHAR},
+      higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      year = #{year,jdbcType=CHAR},
+      mouth = #{mouth,jdbcType=CHAR},
+      year_will = #{yearWill,jdbcType=CHAR},
+      mouth_will = #{mouthWill,jdbcType=CHAR},
+      union_number = #{unionNumber,jdbcType=INTEGER},
+      attend_union_number = #{attendUnionNumber,jdbcType=INTEGER},
+      attend_union_p = #{attendUnionP,jdbcType=DOUBLE},
+      worker_number = #{workerNumber,jdbcType=INTEGER},
+      worker_p = #{workerP,jdbcType=DOUBLE},
+      activist_number = #{activistNumber,jdbcType=INTEGER},
+      activist_p = #{activistP,jdbcType=DOUBLE},
+      models_number = #{modelsNumber,jdbcType=INTEGER},
+      models_p = #{modelsP,jdbcType=DOUBLE},
+      manage_number = #{manageNumber,jdbcType=INTEGER},
+      manage_p = #{manageP,jdbcType=DOUBLE},
+      frontline_num = #{frontlineNum,jdbcType=INTEGER},
+      frontline_p = #{frontlineP,jdbcType=DOUBLE},
+      wemon_num = #{wemonNum,jdbcType=INTEGER},
+      wemon_p = #{wemonP,jdbcType=DOUBLE},
+      youth_num = #{youthNum,jdbcType=INTEGER},
+      youth_p = #{youthP,jdbcType=DOUBLE},
+      committee_num = #{committeeNum,jdbcType=INTEGER},
+      deputy_leader_num = #{deputyLeaderNum,jdbcType=INTEGER},
+      pay_num = #{payNum,jdbcType=INTEGER},
+      apply_year = #{applyYear,jdbcType=CHAR},
+      apply_mouth = #{applyMouth,jdbcType=CHAR},
+      apply_day = #{applyDay,jdbcType=CHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

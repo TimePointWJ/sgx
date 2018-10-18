@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>换届选举</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/font-awesome.css">
+    <link rel="stylesheet" href="../css/bootstrap-table.css">
+    <link rel="stylesheet" href="../css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/fileinput.min.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ApplyOrg.css">
+    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/dcalendar.picker.js"></script>
+    <style>
+        table tr{
+            border-bottom: 1px solid lightgrey;
+        }
+        .input_text{
+            /*background-color: transparent;*/
+            border-bottom: 1px solid #dbdbdb;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            text-align: center;
+            width: 10%;
+        }
+    </style>
+    <script>
+        $(function () {
+            //时间格式控件
+            $('.mydatepicker').dcalendarpicker();
+            $('.mydatepicker2').dcalendarpicker({
+                format:'yyyy-mm-dd'
+            });
+            $('.mycalendar').dcalendar();
+
+            $("table tbody tr:not('.head'):not('.t-title'):even").css("background","whitesmoke")
+            $("table tbody tr:not('.head'):not('.t-title'):even input").css("background","whitesmoke");
+            $("table tbody tr input").css("text-align","center");
+
+            $("#biao a").click(function (){
+                var id=$(this).attr("id");
+                $(this).css("border","1px solid red");
+                $(this).nextAll().css("border","1px solid #ccc");
+                $(this).prevAll().css("border","1px solid #ccc");
+                $("."+id).css("display","block");
+                $("#form:not(."+id+")").css("display","none");
+                IFrameResize();
+            })
+        })
+        function IFrameResize() {
+            //alert(this.document.body.scrollHeight); //弹出当前页面的高度
+            var obj = parent.document.getElementById("childFrame"); //取得父页面IFrame对象
+            //alert(obj.height); //弹出父页面中IFrame中设置的高度
+            obj.height = this.document.body.scrollHeight; //调整父页面中IFrame的高度为此页面的高度
+        }
+    </script>
+</head>
+<body style="width: 1145px; margin: 0 auto; overflow: auto;" onload="IFrameResize()">
+<div id="container">
+    <div id="part1">
+        <nav class="navbar navbar-default" style="border-radius: unset; border: none;">
+            <div class="container-fluid" style="border-left:6px solid red;">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#"><b>换届选举</b></a>
+                    <div style="display: inline; position: absolute; left: 80%;">
+                        <button type="button" class="btn btn-danger icon-reply" style="width: 80px; margin-top: 8px;" onclick="" id="return"> 返回</button>
+                        <button type="button" class="btn btn-danger icon-ok" style="width: 80px; margin-top: 8px;" onclick="" id="niban"> 拟办</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div id="content" class="navbar navbar-default" style="margin-top: -15px; background: white; border: none; padding: 15px; border-radius: unset;">
+            <div class="container-fluid">
+                <div>
+                    <h4 style="font-weight: bold;  text-align: center;">关于召开<input type="text" class="input_text" value="（单位名称）" style="width: 25%;">工会第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会的请示</h4>
+                    <p style="text-align: center;">工字（年份）<input type="text" class="input_text" style="width: 10%;text-align: center;">号</p>
+                    <p>上级工会委员会（名称）：<input type="text" class="input_text" style="width: 40%;"></p>
+
+                    <p style="text-indent: 2em;"><input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会自<input type="text" class="input_text" style="width: 5%;">年<input type="text" class="input_text" style="width: 5%;">月<input type="text" class="input_text" style="width: 5%;">日召开至今已三年（五年）。根据中国《工会法》和《中国工会章程》的有关规定，任期已满。经本单位党组织同意，拟于<input type="text" class="input_text" style="width: 5%;">年<input type="text" class="input_text" style="width: 5%;">月<input type="text" class="input_text" style="width: 5%;">日召开<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会，进行换届选举。现就有关事项请示如下：</p>
+
+                    <p style="text-indent: 2em;">一、大会的主要任务</p>
+                    <p style="text-indent: 2em;">本次会员大会的主要任务是：1、通过<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届委员会和经费审查委员会工作报告；2、选举产生<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届委员会和经费审查委员会。</p>
+                    <p style="text-indent: 2em;">二、代表的条件、构成及产生程序</p>
+                    <p style="text-indent: 2em;">代表条件：1、系中国工会会员；2、拥护党的路线方针、政策，在政治上、思想上、行动上同党中央保持一致；3、热爱和支持工会工作，有一定的参政议政的能力，能积极反应广大会员群众的愿望和要求；4、工作勤恳、为人正直、作风正派，工作成绩突出，得到大多数会员的拥护和信任。</p>
+                    <p style="text-indent: 2em;"><input type="text" class="input_text" style="width: 30%;">单位现有工会会员<input type="text" class="input_text" style="width: 5%;">名，拟定本次大会会员（代表）为<input type="text" class="input_text" style="width: 5%;">名，代表比例为<input type="text" class="input_text" style="width: 5%;">。</p>
+                    <p style="text-indent: 2em;">代表构成：工会工作者、分会委员<input type="text" class="input_text" style="width: 5%;">名占<input type="text" class="input_text" style="width: 5%;">%；工会积极分子<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；先进、模范人物<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；管理科技人员<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；一线员工<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；其中女代表<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；35岁以下<input type="text" class="input_text" style="width: 5%;">名，占<input type="text" class="input_text" style="width: 5%;">%；</p>
+                    <p style="text-indent: 2em;">代表产生程序：首先将代表名额及代表构成要求下达工会小组，进行充分协商，提出代表候选人建议名单，报<input type="text" class="input_text" style="width: 5%;">届工会委员会；其次，由工会小组召开会议进行差额选举；最后，将选举结果报<input type="text" class="input_text" style="width: 5%;">届工会委员会。大会代表差额比例为代表候选人名额多于应选代表总数的10%。</p>
+                    <p style="text-indent: 2em;">三、第<input type="text" class="input_text" style="width: 5%;">届工会委员会和经费审查委员会的产生</p>
+                    <p style="text-indent: 2em;">拟定<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届委员会设委员<input type="text" class="input_text" style="width: 5%;">名，主席1名，副主席1名，工会委员会委员实行差额选举，差额比例为10%；经费审查委员会委员<input type="text" class="input_text" style="width: 5%;">名，主任1名，实行等额选举。</p>
+                    <P style="text-indent: 2em;">工会委员会委员候选人的产生，以工会小组提名，由<input type="text" class="input_text" style="width: 5%;">届委员会提出建议名单，报经同级党组织和上级工会审查同意后，提交代表大会通过。</P>
+                    <P style="text-indent: 2em;">工会主席和经审主任候选人建议名单，由<input type="text" class="input_text" style="width: 5%;">届工会委员会提出建议名单，报经同级党组织和上级工会审查同意后提出。</P>
+                    <P style="text-indent: 2em;">四、大会的筹备</P>
+                    <P style="text-indent: 2em;">本次会员（代表）大会在<input type="text" class="input_text" style="width: 5%;">单位党组织和上级工会的领导下开展工作。大会的各项筹备工作，由<input type="text" class="input_text" style="width: 30%;">工会第<input type="text" class="input_text" style="width: 5%;">届委员会负责实施。</P>
+                    <p style="text-indent: 2em;">以上请示，请审批。</p>
+
+                    <p style="float: right; text-align: center;">
+                        <input type="text" class="input_text" style="width: 50%;" value="（单位名称）">工会委员会（盖章）<br>
+                        <input type="text" class="input_text">年<input type="text" class="input_text">月<input type="text" class="input_text">日
+                    </p>
+                    <p style="border: unset; width: 95%; display: inline-block">附：<input type="text" class="input_text" style="width: 30%;" value="（单位名称）">工会第<input type="text" class="input_text" style="width: 5%;">届委员会和经费审查委员会委员候选人情况表</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="part2" style="margin:0 auto " >
+
+
+        <div style="margin-top: -20px;background: white;">
+            <div style="width: 1125px; border-radius:23px;  border: 1px solid #ccc; padding: 15px;  margin: 5px 10px 25px 10px;">
+                <h4 style="text-align: center; fot-size:25px; font-weight: bolder; margin-bottom: 15px;"><b data-field="title" id="title1">工会委员会和经审委员会委员候选人情况表</b></h4>
+                <div class="fixed-table-container" style="padding-bottom: 0px;">
+                    <div class="fixed-table-body">
+                        <div class="fixed-table-loading" style="top: 41px; display: none;">正在努力地加载数据中，请稍候……</div>
+                        <table id="table2" data-toolbar="#toolbar" style="border:1px solid whitesmoke;" data-search="true" data-show-refresh="true" data-show-toggle="true" data-show-columns="true" data-show-export="true" data-pagination="true" data-page-list="[10, 25, 50, 100, 1000]" data-id-field="id" data-side-pagination="server" data-url="/MLDSService/Population.svc/getBasicPopulationList?districtID=D1005031612&amp;" class="table-hover">
+                            <tbody style="">
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable">单位名称</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="" data-field="name" tabindex="0" colspan="3" width="40%">
+                                    <div class="th-inner sortable "><input name="dwName" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable ">工商注册号</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="40%">
+                                    <div class="th-inner sortable "><input name="gsNum" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable">单位地址</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="" data-field="name" tabindex="0" colspan="3" width="40%">
+                                    <div class="th-inner sortable "><input name="dwAddress" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable ">法定代表人</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="40%">
+                                    <div class="th-inner sortable "><input name="fdPerson" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable">工会名称</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="" data-field="name" tabindex="0" colspan="3" width="40%">
+                                    <div class="th-inner sortable "><input name="ghName" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="12%">
+                                    <div class="th-inner sortable ">工会主席联系电话及E-mail</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="40%">
+                                    <div class="th-inner sortable "><input name="ghChair" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="1" width="12%">
+                                    <div class="th-inner sortable">职工数</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="" data-field="name" tabindex="0" colspan="2" width="13%">
+                                    <div class="th-inner sortable "><input name="zgNum" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="1" width="12%">
+                                    <div class="th-inner sortable ">女职工数</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="2" width="13%">
+                                    <div class="th-inner sortable "><input name="nzgNum" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="1" width="12%">
+                                    <div class="th-inner sortable ">会员数</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="1" width="12%">
+                                    <div class="th-inner sortable ">女会员数</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="1" width="13%">
+                                    <div class="th-inner sortable "><input name="feVip" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found t-title">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="9" width="100%">
+                                    <div class="th-inner sortable"><h4>工会委员会委员候选人情况</h4></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="background: lightgrey;" class="head">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner">姓名</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner">性别</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">出生年月</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner">文化程度</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner">是否党团员</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner">入会时间</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner">工会职务</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner">行政职务（或工种）</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner">备注</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found t-title">
+                                <td style="text-align: center;" data-field="name" tabindex="0" colspan="9" width="100%">
+                                    <div class="th-inner sortable"><h4>工会经费审查委员会委员候选人情况</h4></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="background: lightgrey;" class="head">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner">姓名</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner">性别</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner">出生年月</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner">文化程度</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner">是否党团员</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner">入会时间</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner">工会职务</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner">行政职务（或工种）</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner">备注</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr style="height: 40px;">
+                                <td style="text-align: center;" data-field="name" tabindex="0">
+                                    <div class="th-inner"><input name="name" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="sex" tabindex="0">
+                                    <div class="th-inner"><input name="sex" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="birth" tabindex="0">
+                                    <div class="th-inner"><input name="birth" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="education" tabindex="0">
+                                    <div class="th-inner"><input name="education" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="isDang" tabindex="0">
+                                    <div class="th-inner"><input name="isDang" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="rhDate" tabindex="0">
+                                    <div class="th-inner"><input name="rhDate" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="ghJob" tabindex="0">
+                                    <div class="th-inner"><input name="ghJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="xzJob" tabindex="0">
+                                    <div class="th-inner"><input name="xzJob" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="text-align: center;" data-field="beizhu" tabindex="0">
+                                    <div class="th-inner"><input name="beizhu" type="text" style="border: none; width:100%;"></div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            <tr class="no-records-found">
+                                <td style="text-align: center;" data-field="declare" tabindex="0" colspan="1" width="10%">
+                                    <div class="th-inner sortable">说明</div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                                <td style="" data-field="declare" tabindex="0" colspan="8" width="90%">
+                                    <div class="th-inner sortable" style="text-align: left;">
+                                        <p>1.工会主席、工会财务委员不可兼任经审委员；<br>
+2.经审主任可在工会委员中产生。（如表格不够可另附）</p>
+                                    </div>
+                                    <div class="fht-cell"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModal" style="width: 80px; border-radius: 5px; line-height: 20px; margin-left: 1000px; margin-top: 15px;" onclick="" id="save2">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" style="height: 570px;">
+                <h3 align="center"><input type="text" class="input_text" value="上级工会名称" style="width: 30%;"></h3>
+
+                <p align="center">上级工会文号<input type="text" class="input_text"></p>
+                <h3 align="center">关于同意召开<input type="text" class="input_text" value="（单位）" style="width: 30%;">工会及第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会的批复</h3>
+                <p><input type="text" class="input_text" style="width: 20%;">单位工会委员会：</p>
+                <p style="text-indent:2em">你会《关于召开<input type="text" class="input_text" value="（单位名称）" style="width: 30%;">工会成立暨第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会的请示》收悉。经研究，现批复如下：</p>
+
+                <p style="text-indent:2em">一、同意<input type="text" class="input_text" style="width: 30%;">单位工会<input type="text" class="input_text" style="width: 5%;">年<input type="text" class="input_text" style="width: 5%;">月召开第<input type="text" class="input_text" style="width: 5%;">届第一次会员（代表）大会；</p>
+                <p style="text-indent:2em">二、同意<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届工会委员会设委员<input type="text" class="input_text" style="width: 5%;">名、主席1名、副主席1名；第<input type="text" class="input_text" style="width: 5%;">届工会经费审查委员会设委员<input type="text" class="input_text" style="width: 5%;">名、经审主任1名；女职工委员会委员<input type="text" class="input_text" style="width: 5%;">名、主任几名；劳动法律监督委员会委员<input type="text" class="input_text" style="width: 5%;">名、主任1名。</p>
+                <p style="text-indent:2em">三、同意<input type="text" class="input_text" style="width: 30%;">单位工会第<input type="text" class="input_text" style="width: 5%;">届工会委员会实行差额选举。</p>
+                <p style="text-indent:2em">请按《中国工会章程》规定，抓紧做好相关工作。</p>
+                <p align="right">上级工会名称（盖章）</p>
+                <p align="right"><input type="text" class="input_text">年<input type="text" class="input_text">月<input type="text" class="input_text">日</p>
+            </div>
+            <div class="modal-footer" style="border:
+unset">
+                <button type="button" class="btn btn-danger" style="width: 70px;">
+                    批复
+                </button>
+                <button type="button" class="btn btn-default" style="background: dimgrey; width: 70px; color: white;" data-dismiss="modal">取消
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+</body>
+</html>

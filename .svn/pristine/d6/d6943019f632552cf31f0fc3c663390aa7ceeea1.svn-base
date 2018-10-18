@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionUserMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionUser">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="CHAR" property="userName" />
+    <result column="login_id" jdbcType="INTEGER" property="loginId" />
+   <result column="higher_union_id" jdbcType="INTEGER" property="higherUnionId" />
+    <result column="higher_union" jdbcType="VARCHAR" property="higherUnion" />
+    <result column="union_id" jdbcType="INTEGER" property="unionId" />
+    <result column="union" jdbcType="VARCHAR" property="union" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="access" jdbcType="CHAR" property="access" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="creat_time" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <select id="getUser" resultMap="BaseResultMap">
+      select * from union_user where login_id = #{loginId} and delflag != 'D'
+  </select>
+  <update id="updateUser" parameterType="com.jtzh.entity.UnionUser">
+    update union_user
+    set user_name = #{userName,jdbcType=CHAR},
+      login_id = #{loginId,jdbcType=VARCHAR},
+      union_id = #{unionId,jdbcType=INTEGER},
+      higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      higher_union = #{higherUnion,jdbcType=VARCHAR},
+      union = #{union,jdbcType=VARCHAR},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      access = #{access,jdbcType=CHAR},
+      password = #{password,jdbcType=VARCHAR},
+      create_time = #{version,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR},
+      identity = #{identity,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+  </update>
+</mapper>

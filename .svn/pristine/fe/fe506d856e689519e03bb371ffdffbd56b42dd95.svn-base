@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionBuildTeamMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionBuildTeam">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="source" jdbcType="CHAR" property="source" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="source_id" jdbcType="INTEGER" property="sourceId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="CHAR" property="sex" />
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="education_degree" jdbcType="VARCHAR" property="educationDegree" />
+    <result column="political_outlook" jdbcType="VARCHAR" property="politicalOutlook" />
+    <result column="post" jdbcType="VARCHAR" property="post" />
+    <result column="union_post" jdbcType="VARCHAR" property="unionPost" />
+    <result column="contact_info" jdbcType="VARCHAR" property="contactInfo" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, source_id, source,type, name, sex, birthday, education_degree, political_outlook, 
+    post,union_post, contact_info, create_name, create_id, create_time, delflag
+  </sql>
+  <select id="selectBuildTeam"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_build_team
+    where delflag != 'D' and source_id = #{sourceId} and source = #{source}
+  </select>
+
+  <insert id="insert" parameterType="java.util.List">
+    insert into union_build_team (source_id, source, type,
+      name, sex, birthday, education_degree, 
+      political_outlook, post,union_post, contact_info, 
+      create_name, create_id, create_time, 
+      delflag)
+    values 
+    <foreach collection ="list" item="item" index= "index" separator =",">
+    ( #{item.sourceId,jdbcType=INTEGER}, #{item.source,jdbcType=CHAR}, #{item.type,jdbcType=CHAR},
+      #{item.name,jdbcType=VARCHAR}, #{item.sex,jdbcType=CHAR}, #{item.birthday,jdbcType=VARCHAR}, #{item.educationDegree,jdbcType=VARCHAR}, 
+      #{item.politicalOutlook,jdbcType=VARCHAR}, #{item.post,jdbcType=VARCHAR},#{item.unionPost,jdbcType=VARCHAR}, #{item.contactInfo,jdbcType=VARCHAR}, 
+      #{item.createName,jdbcType=VARCHAR}, #{item.createId,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+      #{item.delflag,jdbcType=CHAR})
+      </foreach >
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionBuildTeam">
+    insert into union_build_team
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sourceId != null">
+        source_id,
+      </if>
+      <if test="buildId != null">
+        build_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="educationDegree != null">
+        education_degree,
+      </if>
+      <if test="politicalOutlook != null">
+        political_outlook,
+      </if>
+      <if test="post != null">
+        post,
+      </if>
+      <if test="contactInfo != null">
+        contact_info,
+      </if>
+      <if test="createName != null">
+        create_name,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sourceId != null">
+        #{sourceId,jdbcType=CHAR},
+      </if>
+      <if test="buildId != null">
+        #{buildId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="educationDegree != null">
+        #{educationDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalOutlook != null">
+        #{politicalOutlook,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null">
+        #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null">
+        #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionBuildTeam">
+    update union_build_team
+    <set>
+      <if test="sourceId != null">
+        source_id = #{sourceId,jdbcType=CHAR},
+      </if>
+      <if test="buildId != null">
+        build_id = #{buildId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday,jdbcType=VARCHAR},
+      </if>
+      <if test="educationDegree != null">
+        education_degree = #{educationDegree,jdbcType=VARCHAR},
+      </if>
+      <if test="politicalOutlook != null">
+        political_outlook = #{politicalOutlook,jdbcType=VARCHAR},
+      </if>
+      <if test="post != null">
+        post = #{post,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null">
+        contact_info = #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="createName != null">
+        create_name = #{createName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionBuildTeam">
+    update union_build_team
+    set source_id = #{sourceId,jdbcType=CHAR},
+      build_id = #{buildId,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=CHAR},
+      birthday = #{birthday,jdbcType=VARCHAR},
+      education_degree = #{educationDegree,jdbcType=VARCHAR},
+      political_outlook = #{politicalOutlook,jdbcType=VARCHAR},
+      post = #{post,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

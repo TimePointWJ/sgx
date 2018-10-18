@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jtzh.mapper.UnionBuildMapper">
+  <resultMap id="BaseResultMap" type="com.jtzh.entity.UnionBuild">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="build_year" jdbcType="CHAR" property="buildYear" />
+    <result column="build_mouth" jdbcType="CHAR" property="buildMouth" />
+    <result column="build_day" jdbcType="CHAR" property="buildDay" />
+    <result column="approver" jdbcType="VARCHAR" property="approver" />
+    <result column="workers" jdbcType="INTEGER" property="workers" />
+    <result column="women_workers" jdbcType="INTEGER" property="womenWorkers" />
+    <result column="build_team" jdbcType="VARCHAR" property="buildTeam" />
+    <result column="build_team_number" jdbcType="INTEGER" property="buildTeamNumber" />
+    <result column="team_leader" jdbcType="VARCHAR" property="teamLeader" />
+    <result column="deputy_leader" jdbcType="VARCHAR" property="deputyLeader" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="com_name" jdbcType="VARCHAR" property="comName" />
+    <result column="apply_year" jdbcType="CHAR" property="applyYear" />
+    <result column="apply_mouth" jdbcType="CHAR" property="applyMouth" />
+    <result column="apply_day" jdbcType="CHAR" property="applyDay" />
+    <result column="processing_state" jdbcType="CHAR" property="processingState" />
+    <result column="higher_union" jdbcType="VARCHAR" property="higherUnion" />
+    <result column="higher_union_id" jdbcType="INTEGER" property="higherUnionId" />
+    <result column="contacts" jdbcType="VARCHAR" property="contacts" />
+    <result column="contacts_phone" jdbcType="VARCHAR" property="contactsPhone" />
+    <result column="fill_in_time" jdbcType="VARCHAR" property="fillInTime" />
+    <result column="crater_name" jdbcType="VARCHAR" property="craterName" />
+    <result column="create_id" jdbcType="VARCHAR" property="createId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="delflag" jdbcType="CHAR" property="delflag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, build_year, build_mouth,build_day,approver, workers, women_workers, build_team, build_team_number, 
+    team_leader, deputy_leader, title, com_name, apply_year, apply_mouth, apply_day, 
+    processing_state, higher_union, higher_union_id, contacts, contacts_phone, 
+    fill_in_time, crater_name, create_id, create_time,delflag
+  </sql>
+  <select id="getUnion" parameterType="com.jtzh.common.page.Page" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from union_build
+    where delflag <![CDATA[<>]]> 'D'
+     <if test="page.param.keyword != null and page.param.keyword != ''">
+    	and title like concat('%', #{page.param.keyword}, '%')
+     </if>
+    <if test="page.param.start != null and page.param.start != ''" >
+    	and create_time &gt; #{page.param.start}
+    </if>
+    <if test="page.param.end != null and page.param.end != ''">
+    	and create_time &lt; #{page.param.end}
+    </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+     order by create_time asc
+    limit #{page.start},#{page.pageSize}
+  </select>
+  
+    <select id="getUnionTotal" parameterType="com.jtzh.common.page.Page" resultType="java.lang.Integer">
+    select count(1)
+    from union_build
+    where delflag <![CDATA[<>]]> 'D' 
+     <if test="page.param.keyword != null and page.param.keyword != ''">
+    	and title like concat('%', #{page.param.keyword}, '%')
+     </if>
+    <if test="page.param.start != null and page.param.start != ''" >
+    	and create_time &gt; #{page.param.start}
+    </if>
+    <if test="page.param.end != null and page.param.end != ''">
+    	and create_time &lt; #{page.param.end}
+    </if>
+     <if test="page.param.unionId != null and page.param.unionId != ''">
+    	and create_id = #{page.param.unionId}
+     </if>
+     <if test="page.param.superUnionId != null and page.param.superUnionId != ''">
+    	and higher_union_id = #{page.param.superUnionId} and 
+    	 processing_state in 
+          <foreach collection="page.param.list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+     </if>
+  </select>
+  
+  
+  <select id="getUnionByid" resultMap="BaseResultMap">
+  	select 
+    <include refid="Base_Column_List" />
+    from union_build where delflag <![CDATA[<>]]> 'D' and id = #{id}
+  </select>
+  
+  <update id="updateState">
+    update union_build
+    set 
+      processing_state = #{processingState,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateDeflag">
+    update union_build
+    set 
+      delflag = 'D'
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  
+  
+  
+  <insert id="insertUnion" parameterType="com.jtzh.entity.UnionBuild">
+  <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+  </selectKey>
+    insert into union_build ( build_year, build_mouth,build_day, approver,
+      workers, women_workers, build_team, 
+      build_team_number, team_leader, deputy_leader, 
+      title, com_name, apply_year, 
+      apply_mouth, apply_day, processing_state, higher_union, higher_union_id, contacts, 
+      contacts_phone, fill_in_time, crater_name, 
+      create_id, create_time,delflag)
+    values ( #{buildYear,jdbcType=CHAR}, #{buildMouth,jdbcType=CHAR},  #{buildDay,jdbcType=CHAR},#{approver,jdbcType=VARCHAR},
+      #{workers,jdbcType=INTEGER}, #{womenWorkers,jdbcType=INTEGER}, #{buildTeam,jdbcType=VARCHAR}, 
+      #{buildTeamNumber,jdbcType=INTEGER}, #{teamLeader,jdbcType=VARCHAR}, #{deputyLeader,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{comName,jdbcType=VARCHAR}, #{applyYear,jdbcType=CHAR}, 
+      #{applyMouth,jdbcType=CHAR}, #{applyDay,jdbcType=CHAR}, #{processingState,jdbcType=CHAR}, 
+      #{higherUnion,jdbcType=VARCHAR}, #{higherUnionId,jdbcType=INTEGER}, #{contacts,jdbcType=VARCHAR}, 
+      #{contactsPhone,jdbcType=VARCHAR}, #{fillInTime,jdbcType=VARCHAR}, #{craterName,jdbcType=VARCHAR}, 
+      #{createId,jdbcType=INTEGER},#{createTime,jdbcType=TIMESTAMP}, #{delflag,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.jtzh.entity.UnionBuild">
+    insert into union_build
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="buildYear != null">
+        build_year,
+      </if>
+      <if test="buildMouth != null">
+        build_mouth,
+      </if>
+      <if test="workers != null">
+        workers,
+      </if>
+      <if test="womenWorkers != null">
+        women_workers,
+      </if>
+      <if test="buildTeam != null">
+        build_team,
+      </if>
+      <if test="buildTeamNumber != null">
+        build_team_number,
+      </if>
+      <if test="teamLeader != null">
+        team_leader,
+      </if>
+      <if test="deputyLeader != null">
+        deputy_leader,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="comName != null">
+        com_name,
+      </if>
+      <if test="applyYear != null">
+        apply_year,
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth,
+      </if>
+      <if test="applyDay != null">
+        apply_day,
+      </if>
+      <if test="processingState != null">
+        processing_state,
+      </if>
+      <if test="higherUnion != null">
+        higher_union,
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id,
+      </if>
+      <if test="contacts != null">
+        contacts,
+      </if>
+      <if test="contactsPhone != null">
+        contacts_phone,
+      </if>
+      <if test="fillInTime != null">
+        fill_in_time,
+      </if>
+      <if test="craterName != null">
+        crater_name,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="delflag != null">
+        delflag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="buildYear != null">
+        #{buildYear,jdbcType=CHAR},
+      </if>
+      <if test="buildMouth != null">
+        #{buildMouth,jdbcType=CHAR},
+      </if>
+      <if test="workers != null">
+        #{workers,jdbcType=INTEGER},
+      </if>
+      <if test="womenWorkers != null">
+        #{womenWorkers,jdbcType=INTEGER},
+      </if>
+      <if test="buildTeam != null">
+        #{buildTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="buildTeamNumber != null">
+        #{buildTeamNumber,jdbcType=INTEGER},
+      </if>
+      <if test="teamLeader != null">
+        #{teamLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="deputyLeader != null">
+        #{deputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="comName != null">
+        #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="applyYear != null">
+        #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="processingState != null">
+        #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="higherUnion != null">
+        #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="contacts != null">
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactsPhone != null">
+        #{contactsPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="fillInTime != null">
+        #{fillInTime,jdbcType=VARCHAR},
+      </if>
+      <if test="craterName != null">
+        #{craterName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="delflag != null">
+        #{delflag,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.jtzh.entity.UnionBuild">
+    update union_build
+    <set>
+      <if test="buildYear != null">
+        build_year = #{buildYear,jdbcType=CHAR},
+      </if>
+      <if test="buildMouth != null">
+        build_mouth = #{buildMouth,jdbcType=CHAR},
+      </if>
+      <if test="workers != null">
+        workers = #{workers,jdbcType=INTEGER},
+      </if>
+      <if test="womenWorkers != null">
+        women_workers = #{womenWorkers,jdbcType=INTEGER},
+      </if>
+      <if test="buildTeam != null">
+        build_team = #{buildTeam,jdbcType=VARCHAR},
+      </if>
+      <if test="buildTeamNumber != null">
+        build_team_number = #{buildTeamNumber,jdbcType=INTEGER},
+      </if>
+      <if test="teamLeader != null">
+        team_leader = #{teamLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="deputyLeader != null">
+        deputy_leader = #{deputyLeader,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="comName != null">
+        com_name = #{comName,jdbcType=VARCHAR},
+      </if>
+      <if test="applyYear != null">
+        apply_year = #{applyYear,jdbcType=CHAR},
+      </if>
+      <if test="applyMouth != null">
+        apply_mouth = #{applyMouth,jdbcType=CHAR},
+      </if>
+      <if test="applyDay != null">
+        apply_day = #{applyDay,jdbcType=CHAR},
+      </if>
+      <if test="processingState != null">
+        processing_state = #{processingState,jdbcType=CHAR},
+      </if>
+      <if test="higherUnion != null">
+        higher_union = #{higherUnion,jdbcType=VARCHAR},
+      </if>
+      <if test="higherUnionId != null">
+        higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      </if>
+      <if test="contacts != null">
+        contacts = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactsPhone != null">
+        contacts_phone = #{contactsPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="fillInTime != null">
+        fill_in_time = #{fillInTime,jdbcType=VARCHAR},
+      </if>
+      <if test="craterName != null">
+        crater_name = #{craterName,jdbcType=VARCHAR},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="delflag != null">
+        delflag = #{delflag,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.jtzh.entity.UnionBuild">
+    update union_build
+    set build_year = #{buildYear,jdbcType=CHAR},
+      build_mouth = #{buildMouth,jdbcType=CHAR},
+      workers = #{workers,jdbcType=INTEGER},
+      women_workers = #{womenWorkers,jdbcType=INTEGER},
+      build_team = #{buildTeam,jdbcType=VARCHAR},
+      build_team_number = #{buildTeamNumber,jdbcType=INTEGER},
+      team_leader = #{teamLeader,jdbcType=VARCHAR},
+      deputy_leader = #{deputyLeader,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      com_name = #{comName,jdbcType=VARCHAR},
+      apply_year = #{applyYear,jdbcType=CHAR},
+      apply_mouth = #{applyMouth,jdbcType=CHAR},
+      apply_day = #{applyDay,jdbcType=CHAR},
+      processing_state = #{processingState,jdbcType=CHAR},
+      higher_union = #{higherUnion,jdbcType=VARCHAR},
+      higher_union_id = #{higherUnionId,jdbcType=INTEGER},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      contacts_phone = #{contactsPhone,jdbcType=VARCHAR},
+      fill_in_time = #{fillInTime,jdbcType=VARCHAR},
+      crater_name = #{craterName,jdbcType=VARCHAR},
+      create_id = #{createId,jdbcType=INTEGER},
+      delflag = #{delflag,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

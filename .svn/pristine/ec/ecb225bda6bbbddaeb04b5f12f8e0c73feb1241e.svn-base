@@ -1,0 +1,18 @@
+package com.jtzh.service;
+
+import com.jtzh.common.ResultObject;
+import com.jtzh.entity.UnionUser;
+import com.jtzh.pojo.LawParam;
+import com.jtzh.pojo.ViewLaw;
+
+public interface LawService {
+	Object getLawList(LawParam param);
+	
+	ResultObject getLaw(String type,String id);
+	
+	ResultObject removeLaw(String id);
+	
+	ResultObject insertLaw(UnionUser user,ViewLaw view);
+	
+	ResultObject updateLaw(ViewLaw view);
+}
